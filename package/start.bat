@@ -4,10 +4,21 @@ title Mind Language System
 cd /d "%~dp0"
 setlocal enabledelayedexpansion
 
+:: --- Auto-detect path layout ---
+if exist "%~dp0mind-bridge" (
+  set BRIDGE=%~dp0mind-bridge
+  set EXT=%~dp0mind-extension
+) else (
+  set BRIDGE=%~dp0..\bridge
+  set EXT=%~dp0..\extension
+)
+if not exist "!BRIDGE!\package.json" (echo [X] bridge not found & pause & exit /b)
+if not exist "!EXT!\package.json" (echo [X] ext not found & pause & exit /b)
+
 :MENU
 cls
 echo.
-echo  ===== Mind Language System ====
+echo  ===== Mind Language System =====
 echo.
 echo  1. Install + Start
 echo  2. Install only
@@ -29,93 +40,63 @@ goto MENU
 
 :INSTALL
 where node >nul 2>&1
-if %errorlevel% neq 0 (echo [X] Node.js not found & pause & exit /b)
+if %errorlevel% neq 0 (echo [X] Node.js required & pause & exit /b)
 for /f "delims=" %%v in ('node --version') do set NODE_VER=%%v
 echo [OK] Node: %NODE_VER%
 
-cd /d "%~dp0mind-bridge" 2>nul
-if %errorlevel% neq 0 (echo [X] bridge dir not found & pause & exit /b)
+cd /d "!BRIDGE!"
 call npm install
 if %errorlevel% neq 0 (echo [X] npm failed & pause & exit /b)
-echo [OK] bridge deps installed
+echo [OK] bridge deps
 
-cd /d "%~dp0mind-extension" 2>nul
-if %errorlevel% neq 0 (echo [X] extension dir not found & pause & exit /b)
+cd /d "!EXT!"
 call npm install
 call npm run build
 echo [OK] extension built
 
-cd /d "%~dp0mind-bridge"
+cd /d "!BRIDGE!"
 start "Mind Bridge" cmd /c "node src/index.js && pause"
 echo Bridge starting on port 3456...
 echo.
-echo ============ HOW TO USE ============
-echo 1. Install VS Code extension:
-echo    Go to option 4 to package .vsix
-echo    or open mind-extension/ in VS Code, press F5
+echo  1) Install VSIX:  cd !EXT! ^& npx vsce package
+echo  2) Create .mind file with # @d
 echo.
-echo 2. Create a .mind file and start writing
-echo    Use # @d for code generation
-echo ===================================
 pause
 goto MENU
 
 :INSTALL_ONLY
 cls
-echo [Install] Only installing dependencies...
-cd /d "%~dp0mind-bridge" 2>nul && call npm install
-cd /d "%~dp0mind-extension" 2>nul && call npm install && call npm run build
+cd /d "!BRIDGE!" && call npm install
+cd /d "!EXT!" && call npm install && call npm run build
 echo [OK] Done
 pause
 goto MENU
 
 :START_BRIDGE
 cls
-echo [Start] Starting bridge on port 3456...
-cd /d "%~dp0mind-bridge" 2>nul
+cd /d "!BRIDGE!"
 start "Mind Bridge" cmd /c "node src/index.js && pause"
-echo Wait 5 seconds...
 timeout /t 5 /nobreak >nul
-echo [OK] Bridge should be running
-echo Check: http://localhost:3456/health
+echo [OK] Bridge on port 3456
 pause
 goto MENU
 
 :PACKAGE
 cls
-echo [Package] Building VS Code extension .vsix...
-cd /d "%~dp0mind-extension" 2>nul
-if %errorlevel% neq 0 (echo [X] dir not found & pause & exit /b)
+cd /d "!EXT!"
 call npx vsce package
-if %errorlevel% equ 0 (
-    echo [OK] Extension packaged!
-    dir /b *.vsix 2>nul
-) else (
-    echo [i] Package failed - try: cd mind-extension ^&^& npx vsce package
-)
+if %errorlevel% equ 0 (echo [OK] VSIX created & dir /b *.vsix 2>nul) else (echo [i] failed)
 pause
 goto MENU
 
 :TUTORIAL
 cls
 echo.
-echo  ====== Mind Language System Tutorial ======
-echo.
-echo  Step 1: Run option 1 (Install + Start)
-echo    - Installs npm dependencies
-echo    - Builds VS Code extension
-echo    - Starts bridge on port 3456
-echo.
-echo  Step 2: Install the VS Code extension
-echo    Option 4 packages a .vsix file
-echo    Install it in VS Code Extensions panel
-echo.
-echo  Step 3: Create a .mind file
-echo    Write requirements with # @d prefix
-echo    Press Enter to trigger analysis
-echo.
-echo  Step 4: Python + C code auto-generated
-echo    In the same folder as your .mind file
+echo  1) Start bridge (menu option 1 or 3)
+echo  2) Package VSIX (menu option 4)
+echo  3) Install .vsix in VS Code
+echo  4) Create .mind, use # @d, press Enter
+echo     .py and .c auto-generated
 echo.
 pause
 goto MENU
