@@ -1,37 +1,36 @@
-# Mind Bridge — .mind 语义分析桥接服务
+# Mind Bridge — .mind 语义分析 + 代码生成桥接服务
 
 ## 概述
 
-Mind Bridge 是一个轻量级 HTTP 桥接服务，接收 `.mind` 文件内容，调用 **DeepSeek API** 进行语义分析，返回结构化 JSON 供 VS Code 插件渲染。
+轻量级 HTTP 桥接服务，提供两个核心端点：
 
-## 工作原理
-
-```
-.mind 文件内容 → Mind Bridge (:3456) → DeepSeek API → JSON 分析结果
-                     ↓                       ↑
-               POST /analyze           OpenAI SDK
-```
+| 端点 | 功能 |
+|------|------|
+| `POST /analyze` | 接收 `.mind` 文件内容 → DeepSeek 语义分析 → 返回 JSON |
+| `POST /generate` | 检测 `# @d` 注释 → 生成 Python 3 + C11 双版本代码 |
 
 ## 快速开始
 
-### 1. 安装依赖
+### 1. 安装
 
 ```bash
-cd AI"    "文件夹/mind-bridge
+cd bridge
 npm install
 ```
 
-### 2. 配置 API 密钥
+### 2. 配置
 
-编辑 `.env` 文件，确保已填入正确的 DeepSeek API Key：
+编辑 `.env`，填入 DeepSeek API Key：
 
+```env
+DEEPSEEK_API_KEY=sk-xxxxx
+DEEPSEEK_MODEL=deepseek-v4-flash
+PORT=3456
 ```
-DEEPSEEK_API_KEY=sk-your-key-here
-```
 
-> 💡 默认已配置你的密钥，如更换可在 `.env` 中修改。
+> 默认配置已使用你的 API Key，如更换可修改 `.env`。
 
-### 3. 启动服务
+### 3. 启动
 
 ```bash
 npm start
@@ -43,122 +42,124 @@ npm start
 ║     Mind Bridge — 语义分析桥接服务已启动       ║
 ║     监听端口: 3456                            ║
 ║     POST /analyze  — 分析 .mind 文件           ║
+║     POST /generate — 生成 Python + C 代码       ║
 ║     GET  /health   — 健康检查                   ║
 ╚═══════════════════════════════════════════════╝
-```
-
-### 4. 测试服务
-
-```bash
-# 健康检查
-curl http://localhost:3456/health
-
-# 分析测试
-curl -X POST http://localhost:3456/analyze \
-  -H "Content-Type: application/json" \
-  -d '{"content": "Count node num\nif num ≥ 30\n  delete minimum num\nprint result"}'
 ```
 
 ## API 文档
 
 ### `POST /analyze`
 
-**请求体：**
+**请求：** `{ "content": ".mind 文件内容" }`
 
-| 字段 | 类型 | 必填 | 说明 |
-|------|------|------|------|
-| `content` | string | 是 | 完整的 `.mind` 文件内容（≤50000字符） |
-
-**成功响应（200）：**
+**响应：**
 
 ```json
 {
   "tokens": [
-    { "line": 0, "character": 0, "length": 4, "type": "nl-verb" },
-    { "line": 0, "character": 5, "length": 8, "type": "nl-noun" },
-    { "line": 1, "character": 0, "length": 2, "type": "keyword" }
+    { "line": 0, "character": 0, "length": 5, "type": "nl-verb" }
   ],
   "entities": [
-    {
-      "id": "e1",
-      "name": "num",
-      "type": "variable",
-      "occurrences": [
-        { "line": 0, "character": 5, "length": 3 },
-        { "line": 1, "character": 3, "length": 3 }
-      ],
-      "description": "计数器变量"
-    }
+    { "id": "e1", "name": "count", "type": "variable",
+      "occurrences": [{"line":1, "character":3, "length":5}],
+      "description": "计数器变量" }
   ],
-  "nesting": [
-    { "line": 0, "level": 0 },
-    { "line": 1, "level": 0 },
-    { "line": 2, "level": 1 }
-  ],
+  "nesting": [{"line": 0, "level": 0}],
   "diagnostics": [
-    {
-      "line": 3,
-      "character": 6,
-      "length": 6,
-      "message": "未定义实体 'result'",
-      "severity": "error"
-    }
-  ]
+    {"line": 1, "character": 3, "length": 5,
+     "message": "变量未定义", "severity": "warning"}
+  ],
+  "tokenUsage": {
+    "prompt": 342, "completion": 3936,
+    "total": 4278, "cached": 256
+  }
 }
 ```
 
-**Token 类型表：**
+### `POST /generate`
 
-| 类型 | 说明 | 颜色 |
-|------|------|------|
-| `keyword` | 控制流关键字 (if/else/while/for) | 深蓝 |
-| `c-call` | C 风格函数调用 | 亮蓝 |
-| `py-def` | Python 函数定义 | 黄色 |
-| `c-def` | C 函数定义 | 金黄 |
-| `decl` | 变量声明 | 浅蓝 |
-| `ref` | 变量引用 | 青蓝 |
-| `type` | 类型关键字 (int/float/void) | 青色 |
-| `user-type` | 自定义类型名 | 亮青 |
-| `nl-verb` | 自然语言动词/操作 | 紫色 |
-| `nl-noun` | 自然语言名词/属性 | 暖橙 |
-| `operator` | 运算符 | 白色 |
-| `ptr-op` | 指针/箭头运算符 | 白色 |
-| `number` | 数字常量 | 浅绿 |
-| `const` | 特殊常量 (TRUE/FALSE/NULL) | 浅绿 |
-| `string` | 字符串 | 橙色 |
-| `char` | 字符 | 橙色 |
+**请求：** `{ "content": "含 # @d 注释的 .mind 文件内容" }`
+
+**响应：**
+
+```json
+{
+  "py": {
+    "code": "# Python 实现代码（含详尽注释和测试）",
+    "links": [{"mindLine": 0, "fileLine": 2, "name": "function_name"}]
+  },
+  "c": {
+    "code": "// C 实现代码（含详尽注释和测试）",
+    "links": [{"mindLine": 0, "fileLine": 6, "name": "function_name"}]
+  }
+}
+```
+
+### 完整响应示例
+
+请求：
+```json
+{ "content": "# @d 计算斐波那契数列\nDefine function fib\ninput: integer n\nif n <= 1 return n\nreturn fib(n-1) + fib(n-2)" }
+```
+
+返回 Python：
+```python
+def fib(n: int) -> int:
+    """计算第n个斐波那契数"""
+    if n <= 1:
+        return n
+    return fib(n-1) + fib(n-2)
+
+if __name__ == "__main__":
+    n = int(input("请输入n: "))
+    print(f"第{n}个斐波那契数是: {fib(n)}")
+```
+
+返回 C：
+```c
+#include <stdio.h>
+int fib(int n) {
+    if (n <= 1) return n;
+    return fib(n-1) + fib(n-2);
+}
+int main() {
+    int n;
+    printf("请输入n: ");
+    scanf("%d", &n);
+    printf("结果: %d\n", fib(n));
+    return 0;
+}
+```
+
+## Token 类型表
+
+| 类型 | 说明 | 颜色映射 |
+|------|------|---------|
+| `keyword` | 控制流 (if/else/while) | 深蓝 |
+| `c-call` | C 函数调用 | 亮蓝 |
+| `py-def` / `c-def` | 函数定义 | 黄色 |
+| `decl` / `ref` | 变量声明/引用 | 浅蓝 |
+| `type` / `user-type` | 类型关键字 | 青色 |
+| `nl-verb` / `nl-noun` | 自然语言操作/名词 | 紫/橙 |
+| `operator` / `ptr-op` | 运算符/指针 | 白色 |
+| `number` / `const` | 数字/常量 | 浅绿 |
+| `string` / `char` | 字符串/字符 | 橙色 |
 | `comment` | 注释 | 灰绿 |
-| `punct` | 标点/分隔符 | 白色 |
-
-**错误响应：**
-
-| 状态码 | 说明 |
-|--------|------|
-| 400 | 请求参数错误（缺少 content 或格式不对） |
-| 502 | DeepSeek API 连接失败或认证错误 |
-| 500 | 内部处理错误 |
+| `punct` | 标点 | 不着色 |
 
 ## 配置
 
-所有配置通过 `.env` 文件管理：
-
-| 变量 | 默认值 | 说明 |
-|------|--------|------|
-| `DEEPSEEK_API_KEY` | — | DeepSeek API 密钥（必填） |
-| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/v1` | API 基础地址 |
-| `DEEPSEEK_MODEL` | `deepseek-v4-flash` | AI 模型 |
-| `PORT` | `3456` | 服务监听端口 |
-| `REQUEST_TIMEOUT` | `30000` | API 请求超时（毫秒） |
+| 环境变量 | 默认值 | 说明 |
+|----------|--------|------|
+| `DEEPSEEK_API_KEY` | — | API 密钥（必填） |
+| `DEEPSEEK_BASE_URL` | `https://api.deepseek.com/v1` | API 地址 |
+| `DEEPSEEK_MODEL` | `deepseek-v4-flash` | 模型名 |
+| `PORT` | `3456` | 监听端口 |
+| `REQUEST_TIMEOUT` | `60000` | 超时毫秒 |
 
 ## 降级策略
 
-当 DeepSeek API 不可用时，服务会：
-1. 返回空 tokens 列表（VS Code 插件降级为 TextMate 基本语法高亮）
-2. 在 diagnostics 中返回友好的错误提示
-3. nesting 信息由本地算法基于缩进空格数估算
-
-## 与 VS Code 插件的关系
-
-- VS Code 插件启动时自动连接 `http://localhost:{port}/analyze`
-- 端口号可在插件设置中配置（默认 3456）
-- 插件和桥接服务需同时运行
+- API 不可用时返回空 tokens + 本地缩进计算（fallback）
+- 解析失败时自动重试 JSON 提取（代码块 → 补全大括号 → 贪婪匹配）
+- 所有错误有中文提示，插件可据此显示友好消息
