@@ -86,13 +86,13 @@ export function updateDiagnostics(uri: vscode.Uri, diagnostics: DiagnosticInfo[]
       diagnostic.tags = [vscode.DiagnosticTag.Unnecessary];
       diagnostic.code = {
         value: 'mind-error',
-        target: vscode.Uri.parse('https://github.com/mind-lang/mind-extension#error-types'),
+        target: vscode.Uri.parse('https://github.com/TianQue6916/Structured-Pseudocode#error-types'),
       };
     } else {
       // 警告（绿色波浪线）添加提示
       diagnostic.code = {
         value: 'mind-uncertain',
-        target: vscode.Uri.parse('https://github.com/mind-lang/mind-extension#warning-types'),
+        target: vscode.Uri.parse('https://github.com/TianQue6916/Structured-Pseudocode#warning-types'),
       };
     }
 

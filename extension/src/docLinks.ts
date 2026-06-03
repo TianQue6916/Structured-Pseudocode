@@ -20,7 +20,7 @@
  */
 
 import * as vscode from 'vscode';
-import { GenerationResult, FileCode } from './bridgeClient';
+import { GenerationResult } from './bridgeClient';
 import { getTripletUris } from './fileTriplet';
 
 /**

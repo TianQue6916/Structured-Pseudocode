@@ -65,8 +65,6 @@ function findEntityAtPosition(
  * @param context - 扩展上下文
  */
 export function registerHoverFeature(context: vscode.ExtensionContext): void {
-  const config = loadConfig();
-
   // ---- DocumentHighlightProvider: 灰色高亮所有引用 ----
   const highlightProvider = new (class implements vscode.DocumentHighlightProvider {
     provideDocumentHighlights(

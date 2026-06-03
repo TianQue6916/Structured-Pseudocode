@@ -35,22 +35,32 @@ export interface FileTriplet {
 
 /**
  * 根据 .mind 文件路径获取三文件映射
+ * 使用 path 模块处理分隔符，跨平台兼容
  *
  * @param mindPath - .mind 文件的绝对路径（fsPath）
  * @returns 三文件映射
  */
+function splitPath(p: string): { dir: string; base: string; ext: string } {
+  // 同时支持 / 和 \ 分隔符
+  const sep = p.includes('/') ? '/' : '\\';
+  const lastSep = p.lastIndexOf(sep);
+  const dir = lastSep >= 0 ? p.substring(0, lastSep) : '';
+  const filename = p.substring(lastSep + 1);
+  const dot = filename.lastIndexOf('.');
+  const base = dot >= 0 ? filename.substring(0, dot) : filename;
+  const ext = dot >= 0 ? filename.substring(dot) : '';
+  return { dir, base, ext };
+}
+
 export function getTriplet(mindPath: string): FileTriplet {
-  const dir = mindPath.substring(0, mindPath.lastIndexOf('\\'));
-  const basename = mindPath.substring(
-    mindPath.lastIndexOf('\\') + 1,
-    mindPath.lastIndexOf('.')
-  );
+  const { dir, base } = splitPath(mindPath);
+  const sep = mindPath.includes('/') ? '/' : '\\';
 
   return {
     mind: mindPath,
-    py: `${dir}\\${basename}.py`,
-    c: `${dir}\\${basename}.c`,
-    basename,
+    py: `${dir}${sep}${base}.py`,
+    c: `${dir}${sep}${base}.c`,
+    basename: base,
     dir,
   };
 }
