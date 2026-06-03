@@ -1,42 +1,27 @@
 @echo off
-chcp 65001 >nul
-title Mind 语言系统 — 一键安装启动
+chcp 65001 >nul 2>&1
+title Mind 语言系统 -- 一键安装启动
 cd /d "%~dp0"
 
 :: ============================================================
-:: Mind 语言系统 — 一键傻瓜式安装启动器
-:: ============================================================
-:: 功能:
-::   1. 检查系统环境（Node.js、npm、VS Code）
-::   2. 安装桥接服务依赖
-::   3. 构建 VS Code 插件
-::   4. 启动桥接服务
-::   5. 提示安装插件
-::   6. 创建示例文件
+:: Mind 语言系统 -- 一键傻瓜式安装启动器
 :: ============================================================
 
 setlocal enabledelayedexpansion
 
 :MENU
 cls
-echo ╔══════════════════════════════════════════════════════╗
-echo ║                                                      ║
-echo ║       🧠 Mind 自然语言语义标注系统                    ║
-echo ║       ─────────────────────────────                   ║
-echo ║       一键安装 · 启动 · 管理                         ║
-echo ║                                                      ║
-echo ╚══════════════════════════════════════════════════════╝
 echo.
-echo 请选择操作:
+echo  ===== Mind Zi Ran Yu Yan Yi Biao Xi Tong =====
 echo.
-echo   [1] 🚀 一键安装 + 启动（推荐）
-echo   [2] 🔧 仅安装（不启动服务）
-echo   [3] ▶  仅启动桥接服务
-echo   [4] 📦 打包 VS Code 插件
-echo   [5] ❓ 查看使用教程
-echo   [0] 退出
+echo         1. Yi Jian An Zhuang + Qi Dong
+echo         2. Jin An Zhuang
+echo         3. Jin Qi Dong Qiao Jie Fu Wu
+echo         4. Da Bao VS Code Cha Jian
+echo         5. Shi Yong Jiao Cheng
+echo         0. Tui Chu
 echo.
-set /p choice="请输入数字 (0-5): "
+set /p choice="Qing shu ru shu zi (0-5): "
 
 if "%choice%"=="1" goto INSTALL_AND_START
 if "%choice%"=="2" goto INSTALL_ONLY
@@ -48,75 +33,79 @@ goto MENU
 
 :INSTALL_AND_START
 cls
-echo ╔══════════════════════════════════════════════════════╗
-echo ║  步骤 1/5: 检查系统环境                              ║
-echo ╚══════════════════════════════════════════════════════╝
+echo.
+echo ==== Bu Zhou 1/5: Jian Cha Xi Tong Huan Jing ====
 echo.
 
-:: 检查 Node.js
+:: Jian cha Node.js
 where node >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [✗] Node.js 未安装！
-    echo     请从 https://nodejs.org/ 下载安装 Node.js 18+
-    echo     安装后重新运行此脚本
+    echo [X] Node.js wei an zhuang!
+    echo     Qing cong https://nodejs.org/ xia zai Node.js 18+
     pause
     exit /b
 )
-for /f "tokens=2" %%v in ('node --version 2^>nul') do set NODE_VER=%%v
-echo [✓] Node.js: %NODE_VER%
+for /f "delims=" %%v in ('node --version 2^>nul') do set NODE_VER=%%v
+echo [V] Node.js: %NODE_VER%
 
-:: 检查 npm
+:: Jian cha npm
 where npm >nul 2>&1
 if %errorlevel% neq 0 (
-    echo [✗] npm 未安装！
+    echo [X] npm wei an zhuang!
     pause
     exit /b
 )
-for /f "tokens=1" %%v in ('npm --version 2^>nul') do set NPM_VER=%%v
-echo [✓] npm: %NPM_VER%
+for /f "delims=" %%v in ('npm --version 2^>nul') do set NPM_VER=%%v
+echo [V] npm: %NPM_VER%
 
-:: 检查 VS Code
+:: Jian cha VS Code
 where code >nul 2>&1
 if %errorlevel% equ 0 (
-    echo [✓] VS Code: 已安装
+    echo [V] VS Code: yi an zhuang
 ) else (
-    echo [!] VS Code 命令行工具未找到
-    echo     不影响桥接服务，但需要 VS Code 来安装插件
+    echo [!] VS Code ming ling xing gong ju wei zhao dao
+    echo     Bu ying xiang qiao jie fu wu
 )
 
 echo.
-echo ╔══════════════════════════════════════════════════════╗
-echo ║  步骤 2/5: 安装桥接服务依赖                          ║
-echo ╚══════════════════════════════════════════════════════╝
+echo ==== Bu Zhou 2/5: An Zhuang Qiao Jie Fu Wu Yi Lai ====
 echo.
-echo 正在安装 mind-bridge 依赖...
+echo Zheng zai an zhuang mind-bridge yi lai...
 
-cd /d "%~dp0mind-bridge"
+cd /d "%~dp0mind-bridge" 2>nul
+if %errorlevel% neq 0 (
+    echo [X] wei zhao dao mind-bridge mu lu!
+    echo     Qing que bao ben wen jian yu mind-bridge/ tong ji
+    pause
+    exit /b
+)
 if not exist "package.json" (
-    echo [✗] 未找到 mind-bridge 目录！
-    echo     请确保脚本在正确的位置运行
+    echo [X] package.json wei zhao dao!
     pause
     exit /b
 )
 
 call npm install
 if %errorlevel% neq 0 (
-    echo [✗] 依赖安装失败！
+    echo [X] yi lai an zhuang shi bai!
     pause
     exit /b
 )
-echo [✓] 桥接服务依赖安装完成
+echo [V] qiao jie fu wu yi lai an zhuang wan cheng
 
 echo.
-echo ╔══════════════════════════════════════════════════════╗
-echo ║  步骤 3/5: 构建 VS Code 插件                         ║
-echo ╚══════════════════════════════════════════════════════╝
+echo ==== Bu Zhou 3/5: Gou Jian VS Code Cha Jian ====
 echo.
-echo 正在构建 mind-extension...
+echo Zheng zai gou jian mind-extension...
 
-cd /d "%~dp0mind-extension"
+cd /d "%~dp0mind-extension" 2>nul
+if %errorlevel% neq 0 (
+    echo [X] wei zhao dao mind-extension mu lu!
+    pause
+    exit /b
+)
 if not exist "package.json" (
-    echo [✗] 未找到 mind-extension 目录！
+    echo [X] package.json wei zhao dao!
     pause
     exit /b
 )
@@ -124,152 +113,136 @@ if not exist "package.json" (
 call npm install
 call npm run build
 if %errorlevel% neq 0 (
-    echo [✗] 插件构建失败！
+    echo [X] cha jian gou jian shi bai!
     pause
     exit /b
 )
-echo [✓] 插件构建成功
+echo [V] cha jian gou jian cheng gong
 
 echo.
-echo ╔══════════════════════════════════════════════════════╗
-echo ║  步骤 4/5: 启动桥接服务                               ║
-echo ╚══════════════════════════════════════════════════════╝
+echo ==== Bu Zhou 4/5: Qi Dong Qiao Jie Fu Wu ====
 echo.
-echo 正在启动 Mind Bridge (端口 3456)...
-echo 提示: 首次启动需要连接 DeepSeek API，需等待 20-30 秒
-echo.
+echo Zheng zai qi dong Mind Bridge (duan kou 3456)...
 
 cd /d "%~dp0mind-bridge"
 start "Mind Bridge" cmd /c "node src/index.js && pause"
 
-:: 等待服务启动
-echo 等待服务就绪...
+:: Deng dai fu wu qi dong
+echo Deng dai fu wu jiu xu...
 timeout /t 5 /nobreak >nul
 
-:: 检查是否启动成功
-curl -s http://localhost:3456/health >nul 2>&1
+:: Jian cha fu wu zhuang tai
+call :CHECK_HEALTH
 if %errorlevel% equ 0 (
-    echo [✓] 桥接服务启动成功！(端口 3456)
+    echo [V] qiao jie fu wu qi dong cheng gong!
 ) else (
-    echo [!] 桥接服务可能还在启动中...
-    echo     请稍后访问 http://localhost:3456/health 检查
-    echo     或在任务管理器中检查是否有 node.exe 进程
+    echo [!] Qiao jie fu wu ke neng zai qi dong zhong...
+    echo     Qing shao hou fang wen http://localhost:3456/health jian cha
 )
 
 echo.
-echo ╔══════════════════════════════════════════════════════╗
-echo ║  步骤 5/5: 安装 VS Code 插件                         ║
-echo ╚══════════════════════════════════════════════════════╝
+echo ==== Bu Zhou 5/5: An Zhuang VS Code Cha Jian ====
 echo.
-echo 两种方式安装插件:
+echo Liang zhong fang shi an zhuang cha jian:
 echo.
-echo  方式 A — 从 VSIX 安装（推荐）:
-echo     1. 打开命令行 → cd "%~dp0mind-extension"
-echo     2. 运行: npx vsce package
-echo     3. 在 VS Code 中: 扩展 → ... → 从 VSIX 安装
+echo   Fang shi A -- Cong VSIX an zhuang:
+echo     1. Da kai ming ling xing -^> cd "%~dp0mind-extension"
+echo     2. Yun xing: npx vsce package
+echo     3. VS Code zhong: kuo zhan -^> ... -^> cong VSIX an zhuang
 echo.
-echo  方式 B — 开发模式:
-echo     1. VS Code 打开 "%~dp0mind-extension"
-echo     2. 按 F5 启动扩展开发模式
-echo     3. 新窗口中打开 .mind 文件
+echo   Fang shi B -- Kai fa mo shi:
+echo     1. VS Code da kai "%~dp0mind-extension"
+echo     2. An F5 qi dong kuo zhan kai fa mo shi
 echo.
-echo  方式 C — 直接复制文件夹:
-echo     将 mind-extension 文件夹复制到
-echo     %%USERPROFILE%%\.vscode\extensions\ 目录
+echo  ================================
+echo     An zhuang wan cheng!
+echo     Xian zai ni ke yi chuang jian .mind wen jian le
+echo     Shi li wen jian: "%~dp0..\package\示例.mind"
+echo  ================================
 echo.
-echo ──────────────────────────────────────────────────
-echo  🎉 安装完成！
-echo  现在你可以在 VS Code 中创建 .mind 文件了
-echo  示例文件: "%~dp0示例.mind"
-echo ──────────────────────────────────────────────────
-echo.
-
 pause
 goto MENU
 
 :INSTALL_ONLY
 cls
-echo [安装] 仅安装依赖，不启动服务...
-cd /d "%~dp0mind-bridge"
-call npm install
-cd /d "%~dp0mind-extension"
-call npm install
-call npm run build
-echo [✓] 安装完成
+echo [An zhuang] Jin an zhuang yi lai...
+cd /d "%~dp0mind-bridge" 2>nul && call npm install
+cd /d "%~dp0mind-extension" 2>nul && call npm install && call npm run build
+echo [V] an zhuang wan cheng
 pause
 goto MENU
 
 :START_ONLY
 cls
-echo [启动] 启动桥接服务...
-cd /d "%~dp0mind-bridge"
+echo [Qi dong] Qi dong qiao jie fu wu...
+cd /d "%~dp0mind-bridge" 2>nul
 start "Mind Bridge" cmd /c "node src/index.js && pause"
-timeout /t 3 /nobreak >nul
-curl -s http://localhost:3456/health >nul 2>&1
+timeout /t 5 /nobreak >nul
+call :CHECK_HEALTH
 if %errorlevel% equ 0 (
-    echo [✓] 桥接服务已在运行 (端口 3456)
+    echo [V] Qiao jie fu wu yi zai yun xing (duan kou 3456)
 ) else (
-    echo [!] 服务可能还在启动，请稍后检查
+    echo [!] Fu wu ke neng hai zai qi dong zhong
 )
 pause
 goto MENU
 
 :PACKAGE
 cls
-echo [打包] 生成 VS Code 插件安装包 (.vsix)...
-cd /d "%~dp0mind-extension"
+echo [Da bao] Sheng cheng VS Code cha jian an zhuang bao (.vsix)...
+cd /d "%~dp0mind-extension" 2>nul
 call npx vsce package
 if %errorlevel% equ 0 (
-    echo [✓] 插件打包成功！
+    echo [V] Cha jian da bao cheng gong!
     dir /b *.vsix 2>nul
 ) else (
-    echo [!] 打包失败，请检查错误信息
+    echo [!] Da bao shi bai
 )
 pause
 goto MENU
 
 :TUTORIAL
 cls
-echo ╔══════════════════════════════════════════════════════╗
-echo ║              Mind 语言系统 — 使用教程                 ║
-echo ╚══════════════════════════════════════════════════════╝
 echo.
-echo  ─── 第一步: 启动桥接服务 ───
-echo  运行本脚本 → 选 [1] 一键安装启动
-echo  或手动: cd mind-bridge ^&^& npm start
+echo  ============ Mind Yu Yan Xi Tong ============
 echo.
-echo  ─── 第二步: 安装 VS Code 插件 ───
-echo  方式 A: cd mind-extension ^&^& npx vsce package
-echo         然后安装生成的 .vsix 文件
-echo  方式 B: 用 VS Code 打开 mind-extension 文件夹
-echo         按 F5 启动开发模式
+echo  -- Di Yi Bu: Qi Dong Qiao Jie Fu Wu --
+echo  Yun xing ben jiao ben -^> xuan [1]
+echo  huo shou dong: cd mind-bridge ^&^& npm start
 echo.
-echo  ─── 第三步: 创建 .mind 文件 ───
-echo  新建文件，后缀 .mind，例如 test.mind
+echo  -- Di Er Bu: An Zhuang VS Code Cha Jian --
+echo  cd mind-extension ^&^& npx vsce package
+echo  VS Code zhong an zhuang .vsix wen jian
 echo.
-echo  ─── 第四步: 写需求，自动生成代码 ───
-echo  在 .mind 中用 # @d 开头写需求:
+echo  -- Di San Bu: Chuang Jian .mind Wen Jian --
+echo  Xin jian wen jian, hou zhui .mind
 echo.
-echo    # @d 实现链表反转
-echo    # 要求: 输入头节点，返回反转后的头
+echo  -- Di Si Bu: Xie Xu Qiu, Zi Dong Sheng Cheng Dai Ma --
+echo  Yong # @d kai tou xie xu qiu:
+echo    # @d shi xian lian biao fan zhuan
 echo    Define function reverse_list
-echo    if head is null return null
 echo.
-echo  写完按 Enter → 自动分析 → 生成同目录下:
-echo    test.py   (Python 实现，含详细注释)
-echo    test.c    (C 实现，含详细注释)
+echo  An Enter -^> zi dong fen xi -^> sheng cheng tong mu lu xia:
+echo    test.py  (Python shi xian, han xiang zhu)
+echo    test.c   (C shi xian, han xiang zhu)
 echo.
-echo  ─── 第五步: 超链接导航 ───
-echo  在 .mind 中点击 # @d 注释 → 跳转到 .py/.c 函数
-echo  在 .py/.c 中点击函数注释 → 跳回 .mind 需求
-echo.
-echo  ─── 快捷键 ───
-echo  Ctrl+Shift+P → "Mind: 立即分析"
-echo  Ctrl+Shift+P → "Mind: 显示状态"
-echo.
-echo  ─── 设置 ───
-echo  VS Code 设置 → 扩展 → Mind Language
-echo  (颜色/缩进线/端口/行为 全部可调)
+echo  -- Di Wu Bu: Chao Lian Jie Dao Hang --
+echo  Dian ji .mind zhong de # @d zhu shi
+echo  -^> tiao zhuan dao .py/.c han shu wei zhi
 echo.
 pause
 goto MENU
+
+:: ============================================================
+:: Zi cheng xu: Jian cha qiao jie fu wu jian kang
+:: ============================================================
+:CHECK_HEALTH
+:: Shi yong curl (Windows 10+ nei zhi) huo PowerShell
+where curl >nul 2>&1
+if %errorlevel% equ 0 (
+    curl -s http://localhost:3456/health >nul 2>&1
+    exit /b %errorlevel%
+)
+:: curl bu ke yong, shi yong PowerShell
+powershell -Command "try { $r = Invoke-WebRequest -Uri 'http://localhost:3456/health' -TimeoutSec 3; exit 0 } catch { exit 1 }" >nul 2>&1
+exit /b %errorlevel%
