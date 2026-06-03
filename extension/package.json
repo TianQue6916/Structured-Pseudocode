@@ -5,6 +5,10 @@
   "version": "1.0.0",
   "publisher": "mind-lang",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TianQue6916/Structured-Pseudocode.git"
+  },
   "private": true,
   "engines": {
     "vscode": "^1.82.0"
