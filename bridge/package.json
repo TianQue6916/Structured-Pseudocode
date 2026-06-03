@@ -1,0 +1,17 @@
+{
+  "name": "mind-bridge",
+  "version": "1.0.0",
+  "description": "Mind 语言分析桥接服务 — 接收 .mind 文件内容，调用 DeepSeek API 分析语义，返回结构化 JSON",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.0",
+    "openai": "^4.78.0"
+  }
+}

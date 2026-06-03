@@ -1,0 +1,65 @@
+# ============================================================
+# mind 语言示例文件 — 展示所有 18 种词汇类型
+# ============================================================
+# Mind 是一种纯描述性语言，混合自然语言、C 风格和 Python 风格语法。
+# 本文件只做演示，不运行、不编译。
+
+# ---- 1. 基础操作 ----
+Count node num
+if num ≥ 30
+  delete minimum num
+  add node count to total
+print result
+
+# ---- 2. 控制流 + 函数 ----
+def process_data(nums)
+  if len(nums) == 0
+    print "empty array"
+    return NULL
+  sorted = sort(nums)
+  return sorted
+
+# ---- 3. C 风格类型和指针 ----
+struct Node {
+  int data
+  Node* next
+}
+
+int main(void) {
+  Node* head → NULL
+  int count = 0
+  return 0
+}
+
+# ---- 4. Python 风格 ----
+class Stack:
+  def push(self, item):
+    items → append(item)
+  def pop(self):
+    if len(items) > 0
+      return items → remove_last()
+    return None
+
+# ---- 5. 纯自然语言描述 ----
+收集所有学生的成绩
+如果平均分 ≥ 60
+  输出"及格"
+否则
+  输出"不及格"
+
+# ---- 6. 混合风格 ----
+# 描述一个排序算法
+def quick_sort(arr)
+  # 基准条件
+  if len(arr) ≤ 1
+    return arr
+  pivot = arr[0]
+  left = []
+  right = []
+  for each x in arr[1:]
+    if x < pivot
+      left → append(x)
+    else
+      right → append(x)
+  result = quick_sort(left) + [pivot] + quick_sort(right)
+  return result

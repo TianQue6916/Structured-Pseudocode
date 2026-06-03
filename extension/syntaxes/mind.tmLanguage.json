@@ -1,0 +1,152 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Mind",
+  "scopeName": "source.mind",
+  "fileTypes": [".mind"],
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#numbers" },
+    { "include": "#keywords" },
+    { "include": "#types" },
+    { "include": "#constants" },
+    { "include": "#function-calls" },
+    { "include": "#function-definitions" },
+    { "include": "#pointers" },
+    { "include": "#operators" },
+    { "include": "#punctuation" },
+    { "include": "#natural-language" }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.number-sign.mind",
+          "match": "#.*$",
+          "comment": "Python 风格 # 注释"
+        },
+        {
+          "name": "comment.line.double-slash.mind",
+          "match": "\\/\\/.*$",
+          "comment": "C 风格 // 注释"
+        },
+        {
+          "name": "comment.block.mind",
+          "begin": "/\\*",
+          "end": "\\*/",
+          "comment": "C 风格 /* */ 块注释"
+        }
+      ]
+    },
+
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.mind",
+          "begin": "\"",
+          "end": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.mind" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.mind" }
+          }
+        },
+        {
+          "name": "string.quoted.single.mind",
+          "begin": "'",
+          "end": "'",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.mind" }
+          },
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.mind" }
+          }
+        }
+      ]
+    },
+
+    "numbers": {
+      "name": "constant.numeric.mind",
+      "match": "\\b(?:0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b"
+    },
+
+    "keywords": {
+      "name": "keyword.control.mind",
+      "match": "\\b(if|else|elif|while|for|switch|case|default|break|continue|return|def|class|struct|enum|union|typedef|import|from|as|pass|yield|lambda|with|try|except|finally|raise|assert|del|global|nonlocal|in|is|and|or|not|void|const|static|extern|register|volatile|inline|sizeof|typedef)\\b",
+      "comment": "控制流关键字 + Python/C 关键字"
+    },
+
+    "types": {
+      "name": "storage.type.mind",
+      "match": "\\b(int|float|double|char|bool|_Bool|short|long|signed|unsigned|size_t|ssize_t|uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|string|list|dict|tuple|set|True|False|None|nullptr|NULL|void|auto)\\b",
+      "comment": "类型关键字"
+    },
+
+    "constants": {
+      "name": "constant.language.mind",
+      "match": "\\b(TRUE|FALSE|NULL|None|nullptr|true|false|null|nil|PI|E|INFINITY|NAN|EOF|MAX|MIN)\\b"
+    },
+
+    "function-calls": {
+      "name": "support.function.c.mind",
+      "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
+      "captures": {
+        "1": { "name": "entity.name.function.mind" }
+      },
+      "comment": "C/Python 函数调用: func(...)"
+    },
+
+    "function-definitions": {
+      "patterns": [
+        {
+          "name": "meta.function.python.mind",
+          "match": "\\b(def)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+          "captures": {
+            "1": { "name": "keyword.control.mind" },
+            "2": { "name": "entity.name.function.mind" }
+          },
+          "comment": "Python 函数定义: def name"
+        },
+        {
+          "name": "meta.function.c.mind",
+          "match": "\\b((?:int|float|double|char|void|bool|long|short|unsigned|signed|size_t|struct\\s+[a-zA-Z_][a-zA-Z0-9_]*|const)\\s+[*\\s]*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "captures": {
+            "1": { "name": "storage.type.mind" },
+            "2": { "name": "entity.name.function.mind" }
+          },
+          "comment": "C 函数定义: type name(...)"
+        }
+      ]
+    },
+
+    "pointers": {
+      "name": "keyword.operator.pointer.mind",
+      "match": "(->|→|\\.\\*|::)",
+      "comment": "指针/箭头/作用域运算符"
+    },
+
+    "operators": {
+      "name": "keyword.operator.mind",
+      "match": "(?:[+\\-*/%&|^~!<>=]=?|<=>|&&|\\|\\||\\+\\+|--|->|→|≥|≤|≠|≡|∷)",
+      "comment": "运算符 + 数学符号"
+    },
+
+    "punctuation": {
+      "name": "punctuation.mind",
+      "match": "[(){}\\[\\],;:]"
+    },
+
+    "natural-language": {
+      "patterns": [
+        {
+          "name": "variable.other.noun.mind",
+          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
+          "comment": "普通标识符作为名词/实体名（兜底规则，需在最后匹配）"
+        }
+      ],
+      "comment": "自然语言和标识符。匹配未被前面规则捕获的词汇。"
+    }
+  },
+  "comment": "Mind Language TextMate 语法。定义了 18 种语义分类的语法高亮规则，支持 C 风格、Python 风格和自然语言混合。"
+}
