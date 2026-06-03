@@ -33,11 +33,14 @@ npx vsce package
 
 安装方式：
 
+> ⚠️ **不要双击 .vsix 文件**，那样会打开 Visual Studio 安装器导致失败。
+> 必须在 **VS Code 内部**安装。
+
 | 方式 | 操作 |
 |------|------|
-| **拖拽安装** | 直接把 `.vsix` 文件拖进 VS Code 扩展面板 |
-| **菜单安装** | VS Code → 扩展(Ctrl+Shift+X) → `...` → 从 VSIX 安装 |
-| **命令行** | `code --install-extension mind-language-1.0.0.vsix` |
+| **拖拽安装** ✅ | 直接把 `.vsix` 文件**拖进** VS Code 扩展面板 |
+| **菜单安装** ✅ | VS Code → 扩展(Ctrl+Shift+X) → `...` → 从 VSIX 安装 |
+| **命令行** ✅ | `code --install-extension mind-language-1.0.0.vsix` |
 
 ### 开发模式
 
