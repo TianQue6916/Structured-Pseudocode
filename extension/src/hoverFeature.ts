@@ -123,9 +123,21 @@ export function registerHoverFeature(context: vscode.ExtensionContext): void {
 
       const markdown = new vscode.MarkdownString();
       markdown.isTrusted = true;
+      markdown.supportHtml = true;
       markdown.appendMarkdown(`**${escapeMarkdown(entity.name)}** \\\n`);
       markdown.appendMarkdown(`类型: ${typeLabel} \\\n`);
       markdown.appendMarkdown(`引用: ${occurrencesCount} 处 \\\n`);
+
+      // ---- 列出每个引用的具体位置（可点击跳转） ----
+      for (let i = 0; i < occurrencesCount; i++) {
+        const occ = entity.occurrences[i];
+        const line1 = occ.line + 1; // VS Code 显示行号从1开始
+        const col = occ.character;
+        markdown.appendMarkdown(
+          `  ${i + 1}. [行 ${line1}, 列 ${col}](${document.uri.toString()}#${line1}) \\\n`
+        );
+      }
+
       if (entity.description) {
         markdown.appendMarkdown(`---\n${escapeMarkdown(entity.description)}\n`);
       }
