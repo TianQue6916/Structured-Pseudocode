@@ -20,7 +20,8 @@ Mind 自然语言语义标注系统 — 安装使用说明
 
   第二步：安装 VS Code 插件
     在启动器菜单选 [4] 打包 VS Code 插件
-    → 生成 .vsix 文件 → VS Code 中安装
+    → 生成 mind-extension/mind-language-1.0.0.vsix
+    → 拖进 VS Code 扩展面板 或 扩展→...→从VSIX安装
     或: 用 VS Code 打开 mind-extension 文件夹 → 按 F5
 
   第三步：开始使用

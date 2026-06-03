@@ -80,8 +80,17 @@ cd extension
 npm install
 npm run build
 npx vsce package
-# 在 VS Code 中安装生成的 .vsix
 ```
+
+生成的文件：`extension/mind-language-1.0.0.vsix`
+
+安装到 VS Code：
+
+| 方式 | 操作 |
+|------|------|
+| 拖拽 | 把 `.vsix` 文件拖进 VS Code 扩展面板 |
+| 菜单 | 扩展(Ctrl+Shift+X) → `...` → 从 VSIX 安装 |
+| 命令行 | `code --install-extension extension/mind-language-1.0.0.vsix` |
 
 ### 3. 创建 .mind 文件
 
