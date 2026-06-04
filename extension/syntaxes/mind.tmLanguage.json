@@ -1,94 +1,63 @@
 {
-  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "Mind",
   "scopeName": "source.mind",
+  "name": "Mind",
   "fileTypes": [".mind"],
   "patterns": [
     { "include": "#comments" },
     { "include": "#strings" },
     { "include": "#numbers" },
-    { "include": "#control-keywords" },
-    { "include": "#declaration-keywords" },
-    { "include": "#python-keywords" },
-    { "include": "#c-keywords" },
-    { "include": "#builtin-functions" },
+    { "include": "#keywords" },
+    { "include": "#declarations" },
+    { "include": "#builtins" },
     { "include": "#types" },
     { "include": "#constants" },
     { "include": "#function-calls" },
-    { "include": "#function-definitions" },
-    { "include": "#import-export" },
-    { "include": "#pointers" },
-    { "include": "#comparison-operators" },
-    { "include": "#arithmetic-operators" },
+    { "include": "#function-defs" },
+    { "include": "#decorators" },
     { "include": "#annotations" },
-    { "include": "#assignment-operators" },
-    { "include": "#logical-operators" },
-    { "include": "#punctuation" },
+    { "include": "#operators" },
     { "include": "#identifiers" }
   ],
   "repository": {
     "comments": {
       "patterns": [
         { "name": "comment.line.number-sign.mind", "match": "#.*$" },
-        { "name": "comment.line.double-slash.mind", "match": "//.*$" },
+        { "name": "comment.line.double-slash.mind", "match": "\\/\\/.*$" },
         { "name": "comment.block.mind", "begin": "/\\*", "end": "\\*/" }
       ]
     },
     "strings": {
       "patterns": [
-        {
-          "name": "string.quoted.double.mind",
-          "begin": "\"", "end": "\"",
-          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.mind" } },
-          "endCaptures": { "0": { "name": "punctuation.definition.string.end.mind" } }
-        },
-        {
-          "name": "string.quoted.single.mind",
-          "begin": "'", "end": "'"
-        }
+        { "name": "string.quoted.double.mind", "begin": "\"", "end": "\"" },
+        { "name": "string.quoted.single.mind", "begin": "'", "end": "'" }
       ]
     },
     "numbers": {
       "patterns": [
         { "name": "constant.numeric.hex.mind", "match": "\\b0[xX][0-9a-fA-F]+\\b" },
-        { "name": "constant.numeric.binary.mind", "match": "\\b0[bB][01]+\\b" },
         { "name": "constant.numeric.float.mind", "match": "\\b\\d+\\.\\d+(?:[eE][+-]?\\d+)?\\b" },
         { "name": "constant.numeric.integer.mind", "match": "\\b\\d+\\b" }
       ]
     },
-    "control-keywords": {
+    "keywords": {
       "name": "keyword.control.mind",
-      "match": "\\b(if|else|elif|while|for|switch|case|default|break|continue|return|goto|do)\\b"
+      "match": "\\b(if|else|elif|while|for|switch|case|default|break|continue|return|goto|do|import|from|as|export|include|require|try|except|finally|raise|pass|yield|lambda|with|assert|del|global|nonlocal|async|await|and|or|not|in|is)\\b"
     },
-    "declaration-keywords": {
+    "declarations": {
       "name": "keyword.declaration.mind",
-      "match": "\\b(def|class|struct|enum|union|typedef|interface|impl|trait|fun|fn|function|let|var|const|val|mut)\\b"
+      "match": "\\b(def|class|struct|enum|union|typedef|interface|fun|fn|function|let|var|const|val|mut|static|extern|register|volatile|inline|sizeof|signed|unsigned|self|cls)\\b"
     },
-    "python-keywords": {
-      "name": "keyword.other.python.mind",
-      "match": "\\b(pass|yield|lambda|with|try|except|finally|raise|assert|del|global|nonlocal|in|is|and|or|not|as|from|import|async|await|self|cls)\\b"
-    },
-    "c-keywords": {
-      "name": "keyword.other.c.mind",
-      "match": "\\b(static|extern|register|volatile|inline|restrict|sizeof|auto|signed|unsigned)\\b"
-    },
-    "type-conversion": {
-      "name": "support.function.type.mind",
-      "match": "\b(int()|float()|str()|bool()|list()|dict()|set()|tuple()|chr()|ord()|hex()|bin()|oct())"
-    },
-    "builtin-functions": {
+    "builtins": {
       "name": "support.function.builtin.mind",
-      "match": "\\b(print|len|range|int|str|float|bool|list|dict|set|tuple|min|max|sum|abs|round|sorted|reversed|enumerate|zip|map|filter|open|read|write|append|pop|push|peek|update|delete|insert|remove|clear|copy|count|index|extend|sort|reverse|find|replace|split|join|strip|format|input|type|super|isinstance|issubclass|hasattr|getattr|setattr)\\b"
+      "match": "\\b(print|len|range|min|max|sum|abs|round|sorted|reversed|enumerate|zip|map|filter|open|read|write|append|pop|push|peek|update|delete|insert|remove|clear|copy|count|index|extend|sort|reverse|find|replace|split|join|strip|format|input|type|super|isinstance|hasattr|getattr|setattr)\\b"
     },
     "types": {
       "name": "storage.type.mind",
-      "match": "\\b(int|float|double|char|bool|_Bool|short|long|size_t|ssize_t|uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|string|void|auto|nullptr_t|wchar_t|FILE|pid_t|pthread_t)\\b"
+      "match": "\\b(int|float|double|char|bool|void|short|long|size_t|string|auto|nullptr_t|wchar_t|FILE|pid_t|null|None|True|False|true|false)\\b"
     },
     "constants": {
       "patterns": [
-        { "name": "constant.language.boolean.mind", "match": "\\b(true|false|TRUE|FALSE)\\b" },
-        { "name": "constant.language.null.mind", "match": "\\b(null|NULL|None|nil|nullptr|undefined|NaN)\\b" },
-        { "name": "constant.language.math.mind", "match": "\\b(PI|E|INFINITY|NAN|EOF|MAX|MIN|INT_MAX|INT_MIN)\\b" }
+        { "name": "constant.language.mind", "match": "\\b(PI|E|NULL|nullptr|EOF|INT_MAX|INT_MIN|INFINITY|NAN)\\b" }
       ]
     },
     "function-calls": {
@@ -96,61 +65,28 @@
       "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
       "captures": { "1": { "name": "entity.name.function.mind" } }
     },
+    "function-defs": {
+      "match": "\\b(def)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
+      "captures": {
+        "1": { "name": "keyword.declaration.mind" },
+        "2": { "name": "entity.name.function.definition.mind" }
+      }
+    },
     "decorators": {
       "name": "entity.name.function.decorator.mind",
-      "match": "(@\w+)"
-    },
-    "function-definitions": {
-      "patterns": [
-        {
-          "name": "meta.function.python.mind",
-          "match": "\\b(def)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
-          "captures": {
-            "1": { "name": "keyword.declaration.mind" },
-            "2": { "name": "entity.name.function.definition.mind" }
-          }
-        },
-        {
-          "name": "meta.function.c.mind",
-          "match": "\\b((?:int|float|double|char|void|bool|long|short|unsigned|signed|size_t|static|const)\\s+[*\\s]*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
-          "captures": {
-            "1": { "name": "storage.type.mind" },
-            "2": { "name": "entity.name.function.definition.mind" }
-          }
-        }
-      ]
-    },
-    "pointers": {
-      "name": "keyword.operator.pointer.mind",
-      "match": "(->|→|\\.\\*|::|=>)"
-    },
-    "comparison-operators": {
-      "name": "keyword.operator.comparison.mind",
-      "match": "(===|!==|==|!=|>=|<=|>|<|≤|≥|≠|≡)"
-    },
-    "arithmetic-operators": {
-      "name": "keyword.operator.arithmetic.mind",
-      "match": "(\\+\\+|--|\\+=|-=|\\*=|/=|%=|\\+|-|\\*|/|%)"
+      "match": "(@[a-zA-Z_][a-zA-Z0-9_.]*)"
     },
     "annotations": {
       "name": "storage.type.annotation.mind",
-      "match": ":\s*(int|float|str|bool|None|List|Dict|Set|Tuple|Optional|Any|Union|Callable|Type|Iterable|Iterator|Generator|void|char|double|long|short|struct|enum|union)\b"
+      "match": "(:\\s*)(int|float|str|bool|None|List|Dict|Set|Tuple|Optional|Any|Union|void|char|double|long|short|struct|enum)"
     },
-    "assignment-operators": {
-      "name": "keyword.operator.assignment.mind",
-      "match": "(=|:=|->|←|→)"
-    },
-    "logical-operators": {
-      "name": "keyword.operator.logical.mind",
-      "match": "(&&|\\|\\||!|\\|\\||\\&\\&|and|or|not)"
-    },
-    "punctuation": {
-      "name": "punctuation.mind",
-      "match": "[(){}\\[\\],;:]"
-    },
-    "import-export": {
-      "name": "keyword.control.import.mind",
-      "match": "\b(import|from|as|export|module|package|require|include)"
+    "operators": {
+      "patterns": [
+        { "name": "keyword.operator.comparison.mind", "match": "===|!==|==|!=|>=|<=|>|<|≤|≥|≠|≡" },
+        { "name": "keyword.operator.arithmetic.mind", "match": "\\+\\+|--|\\+=|-=|\\*=|/=|%=|\\+|-|\\*|/|%" },
+        { "name": "keyword.operator.assignment.mind", "match": ":=|->|←|→|=>" },
+        { "name": "keyword.operator.logical.mind", "match": "&&|\\|\\||!" }
+      ]
     },
     "identifiers": {
       "name": "variable.other.mind",
