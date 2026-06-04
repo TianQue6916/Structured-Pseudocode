@@ -98,7 +98,7 @@ export async function ensureTripletFiles(mindPath: string): Promise<void> {
   // 创建目录（确保 exist）
   const dirUri = vscode.Uri.file(t.dir);
 
-  for (const filePath of [t.py, t.c]) {
+  for (const filePath of [t.py]) {
     try {
       await vscode.workspace.fs.stat(vscode.Uri.file(filePath));
       // 文件已存在，跳过
@@ -141,21 +141,11 @@ export async function writeGeneratedCode(
  * 生成空文件的起始内容（含注释说明）
  */
 function getFileHeader(filePath: string, basename: string): string {
-  if (filePath.endsWith('.py')) {
-    return (
-      `# ============================================================\n` +
-      `# ${basename}.py — 自动生成代码\n` +
-      `# 由 Mind 插件根据 ${basename}.mind 中的 # @d 注释自动生成\n` +
-      `# 请勿手动修改此文件，修改请在 .mind 文件中修改后重新生成\n` +
-      `# ============================================================\n\n\n`
-    );
-  } else {
-    return (
-      `// ============================================================\n` +
-      `// ${basename}.c — 自动生成代码\n` +
-      `// 由 Mind 插件根据 ${basename}.mind 中的 # @d 注释自动生成\n` +
-      `// 请勿手动修改此文件，修改请在 .mind 文件中修改后重新生成\n` +
-      `// ============================================================\n\n\n`
-    );
-  }
+  return (
+    `# ============================================================\n` +
+    `# ${basename}.py — 自动生成代码\n` +
+    `# 由 Mind 插件根据 ${basename}.mind 中的 # @d 注释自动生成\n` +
+    `# 请勿手动修改此文件，修改请在 .mind 文件中修改后重新生成\n` +
+    `# ============================================================\n\n\n`
+  );
 }
