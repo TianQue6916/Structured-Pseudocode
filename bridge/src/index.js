@@ -195,7 +195,7 @@ app.listen(PORT, () => {
   console.log('║     Mind Bridge — 语义分析桥接服务已启动       ║');
   console.log(`║     监听端口: ${PORT}                            ║`);
   console.log('║     POST /analyze  — 分析 .mind 文件           ║');
-  console.log('║     POST /generate — 生成 Python + C 代码       ║');
+  console.log('║     POST /generate — 生成 Python 代码           ║');
   console.log('║     GET  /health   — 健康检查                   ║');
   console.log('╚═══════════════════════════════════════════════╝');
   console.log(`[就绪] DeepSeek 模型: ${process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash'}`);
