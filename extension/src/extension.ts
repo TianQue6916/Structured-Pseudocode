@@ -140,6 +140,7 @@ async function checkBridgeConnection(): Promise<boolean> {
 }
 
 async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boolean): Promise<void> {
+  try {
   if (!document || document.languageId !== 'mind') return;
 
   const filePath = document.uri.toString();
@@ -174,9 +175,14 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
   const stats = getDiagnosticStats(document.uri);
   statusBarItem.text = `$(symbol-namespace) Mind ${stats.errors > 0 ? '$(error)' : '$(check)'}`;
   statusBarItem.tooltip = `诊断: ${stats.errors}错误 ${stats.warnings}警告 | Token: ${totalTokensUsed}`;
+  } catch (e: unknown) {
+    console.error('[Mind] 分析失败:', e instanceof Error ? e.message : e);
+    statusBarItem.text = '$(error) Mind 错误';
+  }
 }
 
 async function triggerGeneration(document: vscode.TextDocument): Promise<void> {
+  try {
   const content = document.getText();
   const filePath = document.uri.fsPath;
 
@@ -199,6 +205,10 @@ async function triggerGeneration(document: vscode.TextDocument): Promise<void> {
   }
 
   console.log('[生成] 完成');
+  } catch (e: unknown) {
+    console.error('[生成] 失败:', e instanceof Error ? e.message : e);
+    vscode.window.showErrorMessage('代码生成失败: ' + (e instanceof Error ? e.message : '未知错误'));
+  }
 }
 
 function applyAnalysisResult(document: vscode.TextDocument, result: AnalysisResult): void {
