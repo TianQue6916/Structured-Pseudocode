@@ -16,9 +16,11 @@
     { "include": "#constants" },
     { "include": "#function-calls" },
     { "include": "#function-definitions" },
+    { "include": "#import-export" },
     { "include": "#pointers" },
     { "include": "#comparison-operators" },
     { "include": "#arithmetic-operators" },
+    { "include": "#annotations" },
     { "include": "#assignment-operators" },
     { "include": "#logical-operators" },
     { "include": "#punctuation" },
@@ -70,6 +72,10 @@
       "name": "keyword.other.c.mind",
       "match": "\\b(static|extern|register|volatile|inline|restrict|sizeof|auto|signed|unsigned)\\b"
     },
+    "type-conversion": {
+      "name": "support.function.type.mind",
+      "match": "\b(int()|float()|str()|bool()|list()|dict()|set()|tuple()|chr()|ord()|hex()|bin()|oct())"
+    },
     "builtin-functions": {
       "name": "support.function.builtin.mind",
       "match": "\\b(print|len|range|int|str|float|bool|list|dict|set|tuple|min|max|sum|abs|round|sorted|reversed|enumerate|zip|map|filter|open|read|write|append|pop|push|peek|update|delete|insert|remove|clear|copy|count|index|extend|sort|reverse|find|replace|split|join|strip|format|input|type|super|isinstance|issubclass|hasattr|getattr|setattr)\\b"
@@ -89,6 +95,10 @@
       "name": "entity.name.function.call.mind",
       "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
       "captures": { "1": { "name": "entity.name.function.mind" } }
+    },
+    "decorators": {
+      "name": "entity.name.function.decorator.mind",
+      "match": "(@\w+)"
     },
     "function-definitions": {
       "patterns": [
@@ -122,6 +132,10 @@
       "name": "keyword.operator.arithmetic.mind",
       "match": "(\\+\\+|--|\\+=|-=|\\*=|/=|%=|\\+|-|\\*|/|%)"
     },
+    "annotations": {
+      "name": "storage.type.annotation.mind",
+      "match": ":\s*(int|float|str|bool|None|List|Dict|Set|Tuple|Optional|Any|Union|Callable|Type|Iterable|Iterator|Generator|void|char|double|long|short|struct|enum|union)\b"
+    },
     "assignment-operators": {
       "name": "keyword.operator.assignment.mind",
       "match": "(=|:=|->|←|→)"
@@ -133,6 +147,10 @@
     "punctuation": {
       "name": "punctuation.mind",
       "match": "[(){}\\[\\],;:]"
+    },
+    "import-export": {
+      "name": "keyword.control.import.mind",
+      "match": "\b(import|from|as|export|module|package|require|include)"
     },
     "identifiers": {
       "name": "variable.other.mind",

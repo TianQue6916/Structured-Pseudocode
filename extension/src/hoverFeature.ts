@@ -126,25 +126,34 @@ export function registerHoverFeature(context: vscode.ExtensionContext): void {
       markdown.isTrusted = true;
       markdown.supportHtml = true;
       markdown.appendMarkdown(`<span style="font-size:${config.hoverFontSize}px">`);
-      markdown.appendMarkdown(`**${escapeMarkdown(entity.name)}** \\\n`);
-      markdown.appendMarkdown(`类型: ${typeLabel} \\\n`);
-      markdown.appendMarkdown(`引用: ${occurrencesCount} 处 \\\n`);
 
-      // ---- 列出每个引用的具体位置（可点击跳转） ----
+      // 实体名 + ID + 类型
+      markdown.appendMarkdown(`**${escapeMarkdown(entity.name)}** \`${entity.id}\` \\\n`);
+      markdown.appendMarkdown(`类型: ${typeLabel} · 引用: ${occurrencesCount} 处 \\\n`);
+
+      // 上下文预览 + 位置列表
+      markdown.appendMarkdown(`\n---\n**引用位置:** \\\n`);
       for (let i = 0; i < occurrencesCount; i++) {
         const occ = entity.occurrences[i];
-        const line1 = occ.line + 1; // VS Code 显示行号从1开始
+        const line1 = occ.line + 1;
         const col = occ.character;
+        // 提取该行上下文（如果文档存在）
+        let contextText = '';
+        try {
+          const lineText = document.lineAt(occ.line).text;
+          contextText = lineText.trim().substring(0, 50);
+        } catch {}
         markdown.appendMarkdown(
-          `  ${i + 1}. [行 ${line1}, 列 ${col}](${document.uri.toString()}#${line1}) \\\n`
+          `  ${i + 1}. 行 ${line1}:${col} \`${escapeMarkdown(contextText)}\` [→](${document.uri.toString()}#${line1}) \\\n`
         );
       }
 
+      // 描述
       if (entity.description) {
-        markdown.appendMarkdown(`---\n${escapeMarkdown(entity.description)}\n`);
+        markdown.appendMarkdown(`\n---\n${escapeMarkdown(entity.description)}\n`);
       }
-      // 添加灰色提示
-      markdown.appendMarkdown(`\n---\n_悬停时灰色高亮显示所有引用_\n`);
+
+      markdown.appendMarkdown(`\n---\n_悬停时灰色高亮显示所有引用_  ·  ID: \`${entity.id}\`\n`);
       markdown.appendMarkdown(`</span>`);
 
       return new vscode.Hover(markdown);

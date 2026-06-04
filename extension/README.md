@@ -134,9 +134,10 @@ src/
 
 | 命令 | 快捷键 | 功能 |
 |------|--------|------|
-| `Mind: 立即分析` | Ctrl+Shift+P | 手动触发分析 |
-| `Mind: 重新连接桥接` | Ctrl+Shift+P | 重连后端 |
-| `Mind: 显示状态` | Ctrl+Shift+P | 查看诊断/Token/会话 |
+| `Mind: 分析代码变量` | 编辑器标题栏按钮 | 分析变量/颜色/诊断 |
+| `Mind: AI 检测注释并生成` | 编辑器标题栏按钮 | 检测 # @d 并生成 Python |
+| `Mind: 显示状态/Token` | Ctrl+Shift+P | 打开 Token 用量面板 |
+| `Mind: 重新连接桥接` | Ctrl+Shift+P | 重连后端服务 |
 
 ## 降级策略
 
