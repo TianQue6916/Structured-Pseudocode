@@ -25,7 +25,7 @@
  */
 
 import * as vscode from 'vscode';
-import { loadConfig, onConfigChange } from './config';
+import { loadConfig, onConfigChange, MindConfig } from './config';
 import { analyzeContent, AnalysisResult } from './bridgeClient';
 import { getCachedResult, setCachedResult } from './cache';
 import { registerSemanticTokenProvider, updateSemanticResult, fireSemanticTokensChanged } from './semanticTokens';
@@ -262,6 +262,17 @@ async function checkBridgeConnection(): Promise<boolean> {
  */
 async function triggerAnalysis(document: vscode.TextDocument): Promise<void> {
   if (!document || document.languageId !== 'mind') return;
+
+  // 检查桥接开关：关闭时只做本地缩进渲染
+  const cfg = loadConfig();
+  if (!cfg.enableBridge) {
+    console.log('[Mind] 桥接已禁用，离线模式');
+    statusBarItem.text = '$(symbol-namespace) Mind (离线)';
+    statusBarItem.tooltip = '桥接已禁用 — 设置中可启用';
+    const ed = vscode.window.activeTextEditor;
+    if (ed) renderIndentLines(ed);
+    return;
+  }
 
   const filePath = document.uri.toString();
   const content = document.getText();

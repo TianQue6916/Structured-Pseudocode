@@ -176,6 +176,11 @@
           "maximum": 65535,
           "description": "Mind Bridge 桥接服务端口号"
         },
+        "mind.enableBridge": {
+          "type": "boolean",
+          "default": true,
+          "description": "是否启用桥接服务（关闭后仅使用本地语法高亮，不连接 AI）"
+        },
         "mind.bridgeHost": {
           "type": "string",
           "default": "localhost",

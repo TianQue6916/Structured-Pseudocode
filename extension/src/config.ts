@@ -40,6 +40,7 @@ export interface MindConfig {
   analysisDebounce: number;  // 分析防抖时间（毫秒）
 
   // ---- 桥接服务 ----
+  enableBridge: boolean;     // 是否启用桥接
   bridgePort: number;        // Mind Bridge 端口
   bridgeHost: string;        // Mind Bridge 主机地址
 }
@@ -86,6 +87,7 @@ export function loadConfig(): MindConfig {
     analysisDebounce: cfg.get<number>('analysisDebounce', 500),
 
     // 桥接服务
+    enableBridge: cfg.get<boolean>('enableBridge', true),
     bridgePort: cfg.get<number>('bridgePort', 3456),
     bridgeHost: cfg.get<string>('bridgeHost', 'localhost'),
   };
