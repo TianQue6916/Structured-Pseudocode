@@ -91,6 +91,7 @@ export async function analyzeContent(
   content: string,
   host: string,
   port: number,
+  filePath?: string,
   previousContent?: string,
   previousResult?: AnalysisResult
 ): Promise<AnalysisResult | null> {
@@ -100,6 +101,8 @@ export async function analyzeContent(
 
   try {
     const body: Record<string, unknown> = { content };
+    // 发送文件路径（用于 Reasonix 会话持久化，保证同一文件回到同一会话）
+    if (filePath) body.filePath = filePath;
     // 发送上一次的文件内容和分析结果，保持上下文连续
     if (previousContent && previousResult) {
       body.previousContent = previousContent;

@@ -320,6 +320,7 @@ async function triggerAnalysis(document: vscode.TextDocument): Promise<void> {
   const prevCtx = getSessionContext(filePath);
   const result = await analyzeContent(
     content, config.bridgeHost, config.bridgePort,
+    document.uri.fsPath, // 文件路径，用于 Reasonix 会话持久化
     prevCtx.content, prevCtx.result
   );
 

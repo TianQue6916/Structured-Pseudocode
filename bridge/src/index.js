@@ -52,7 +52,7 @@ app.use((req, res, next) => {
 // ============================================================
 app.post('/analyze', async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content, filePath } = req.body;
 
     // 参数校验
     if (!content || typeof content !== 'string') {
@@ -85,7 +85,7 @@ app.post('/analyze', async (req, res) => {
     // 保存转录到 ~/.reasonix/mind-transcripts/
     saveTranscript(content, 'analyze', JSON.stringify(result), result.tokenUsage);
     // 保存会话到 ~/.reasonix/sessions/（供 reasonix sessions 查看和继续）
-    saveReasonixSession(content, JSON.stringify(result), result.tokenUsage);
+    saveReasonixSession(filePath || 'unknown', content, JSON.stringify(result), result.tokenUsage);
 
     res.json(result);
 
@@ -134,7 +134,7 @@ app.post('/analyze', async (req, res) => {
 // ============================================================
 app.post('/generate', async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content, filePath } = req.body;
 
     if (!content || typeof content !== 'string') {
       return res.status(400).json({
