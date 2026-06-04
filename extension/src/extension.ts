@@ -156,8 +156,11 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
   }
 
   const config = loadConfig();
-  const result = await analyzeContent(content, config.bridgeHost, config.bridgePort);
-  if (!result) return;
+  const result = await analyzeContent(content, config.bridgeHost, config.bridgePort, document.uri.fsPath);
+  if (!result) {
+    vscode.window.showErrorMessage('分析失败：桥接服务无响应，请检查桥接是否启动');
+    return;
+  }
 
   setCachedResult(filePath, content, result);
   updateSemanticResult(filePath, result);
@@ -171,6 +174,9 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
     recordTokenUsage(result.tokenUsage.prompt, result.tokenUsage.completion, result.tokenUsage.cached);
     console.log(`[Token] ↑${result.tokenUsage.prompt} ↓${result.tokenUsage.completion} 缓存:${result.tokenUsage.cached} 累计:${totalTokensUsed}`);
   }
+  vscode.window.showInformationMessage(
+    `分析完成 · Token: ${result.tokenUsage?.total || '?'} (缓存: ${result.tokenUsage?.cached || 0})`
+  );
 
   const stats = getDiagnosticStats(document.uri);
   statusBarItem.text = `$(symbol-namespace) Mind ${stats.errors > 0 ? '$(error)' : '$(check)'}`;
@@ -213,7 +219,10 @@ async function triggerGeneration(document: vscode.TextDocument): Promise<void> {
 
 function applyAnalysisResult(document: vscode.TextDocument, result: AnalysisResult): void {
   const editor = vscode.window.activeTextEditor;
-  if (!editor || editor.document !== document) return;
+  if (!editor || editor.document !== document) {
+    console.warn('[Mind] 分析完成但编辑器已切换，结果缓存待用');
+    return;
+  }
 
   if (result.nesting && result.nesting.length > 0) {
     updateDecorationsFromAnalysis(editor, result.nesting);
