@@ -9,6 +9,7 @@ import { registerDiagnosticManager, updateDiagnostics, getDiagnosticStats } from
 import { registerSessionManager, recordAnalysis, getSessionSummary, saveSessionContext, getSessionContext } from './sessionManager';
 import { ensureTripletFiles, writeGeneratedCode, getPyPath } from './fileTriplet';
 import { registerDocLinks, updateGenerationData } from './docLinks';
+import { recordTokenUsage, showTokenPanel } from './tokenPanel';
 
 let statusBarItem: vscode.StatusBarItem;
 let bridgeConnected = false;
@@ -102,19 +103,7 @@ function registerCommands(context: vscode.ExtensionContext): void {
   // Show status / token usage
   context.subscriptions.push(
     vscode.commands.registerCommand('mind.showStatus', () => {
-      const editor = vscode.window.activeTextEditor;
-      const filePath = editor?.document?.uri?.fsPath || '无';
-      const sessionInfo = getSessionSummary(filePath);
-      const stats = editor ? getDiagnosticStats(editor.document.uri) : { errors: 0, warnings: 0 };
-
-      vscode.window.showInformationMessage(
-        `桥接服务: ${bridgeConnected ? '已连接' : '未连接'}\n` +
-        `文件: ${filePath}\n` +
-        `${sessionInfo}\n` +
-        `Token 消耗: ${totalTokensUsed}\n` +
-        `诊断: ${stats.errors} 错误, ${stats.warnings} 警告`,
-        { modal: true }
-      );
+      showTokenPanel();
     })
   );
 
@@ -178,8 +167,7 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
 
   if (result.tokenUsage) {
     totalTokensUsed += result.tokenUsage.total;
-    const cost = (result.tokenUsage.total) * 0.0000005; // rough estimate
-    totalCostUsd += cost;
+    recordTokenUsage(result.tokenUsage.prompt, result.tokenUsage.completion, result.tokenUsage.cached);
     console.log(`[Token] ↑${result.tokenUsage.prompt} ↓${result.tokenUsage.completion} 缓存:${result.tokenUsage.cached} 累计:${totalTokensUsed}`);
   }
 

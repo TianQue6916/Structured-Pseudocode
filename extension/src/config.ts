@@ -46,6 +46,9 @@ export interface MindConfig {
   // ---- 性能 ----
   analysisDebounce: number;  // 分析防抖时间（毫秒）
 
+  // ---- 显示 ----
+  hoverFontSize: number;     // 悬停字体大小
+
   // ---- 桥接服务 ----
   enableBridge: boolean;     // 是否启用桥接
   bridgePort: number;        // Mind Bridge 端口
@@ -100,6 +103,8 @@ export function loadConfig(): MindConfig {
     // 性能
     analysisDebounce: cfg.get<number>('analysisDebounce', 500),
 
+    // 显示
+    hoverFontSize: cfg.get<number>('hoverFontSize', 12),
     // 桥接服务
     enableBridge: cfg.get<boolean>('enableBridge', true),
     bridgePort: cfg.get<number>('bridgePort', 3456),

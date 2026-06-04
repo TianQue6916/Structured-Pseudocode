@@ -121,9 +121,11 @@ export function registerHoverFeature(context: vscode.ExtensionContext): void {
       const typeLabel = entityTypeToChinese(entity.type);
       const occurrencesCount = entity.occurrences.length;
 
+      const config = loadConfig();
       const markdown = new vscode.MarkdownString();
       markdown.isTrusted = true;
       markdown.supportHtml = true;
+      markdown.appendMarkdown(`<span style="font-size:${config.hoverFontSize}px">`);
       markdown.appendMarkdown(`**${escapeMarkdown(entity.name)}** \\\n`);
       markdown.appendMarkdown(`类型: ${typeLabel} \\\n`);
       markdown.appendMarkdown(`引用: ${occurrencesCount} 处 \\\n`);
@@ -143,6 +145,7 @@ export function registerHoverFeature(context: vscode.ExtensionContext): void {
       }
       // 添加灰色提示
       markdown.appendMarkdown(`\n---\n_悬停时灰色高亮显示所有引用_\n`);
+      markdown.appendMarkdown(`</span>`);
 
       return new vscode.Hover(markdown);
     }
