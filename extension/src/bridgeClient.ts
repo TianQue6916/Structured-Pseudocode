@@ -83,22 +83,32 @@ export interface TokenUsage {
  * @param content - 完整的 .mind 文件内容
  * @param host - 桥接服务主机地址
  * @param port - 桥接服务端口
+ * @param previousContent - 上一次分析的文件内容（用于上下文连续）
+ * @param previousResult - 上一次分析的结果（用于上下文连续）
  * @returns 分析结果，连接失败返回 null
  */
 export async function analyzeContent(
   content: string,
   host: string,
-  port: number
+  port: number,
+  previousContent?: string,
+  previousResult?: AnalysisResult
 ): Promise<AnalysisResult | null> {
   const url = `http://${host}:${port}/analyze`;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 秒超时
 
   try {
+    const body: Record<string, unknown> = { content };
+    // 发送上一次的文件内容和分析结果，保持上下文连续
+    if (previousContent && previousResult) {
+      body.previousContent = previousContent;
+      body.previousResult = previousResult;
+    }
     const response = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify(body),
       signal: controller.signal,
     });
 

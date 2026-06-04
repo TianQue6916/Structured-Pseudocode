@@ -20,6 +20,7 @@
  */
 
 import * as vscode from 'vscode';
+import { AnalysisResult } from './bridgeClient';
 
 /** 对话会话接口 */
 interface Session {
@@ -33,6 +34,10 @@ interface Session {
   lastActive: Date;
   /** 分析次数 */
   analysisCount: number;
+  /** 上一次分析的文件内容（用于上下文连续） */
+  previousContent?: string;
+  /** 上一次分析的结果 */
+  previousResult?: AnalysisResult;
 }
 
 /** 会话存储 Map: 文件路径 → Session */
@@ -113,6 +118,27 @@ export function getActiveSession(): Session | null {
     return sessions.get(activeSessionPath) || null;
   }
   return null;
+}
+
+/**
+ * 保存当前分析结果作为下次分析的上下文
+ */
+export function saveSessionContext(filePath: string, content: string, result: AnalysisResult): void {
+  const session = getOrCreateSession(filePath);
+  session.previousContent = content;
+  session.previousResult = result;
+}
+
+/**
+ * 获取上一次分析的文件内容和结果
+ */
+export function getSessionContext(filePath: string): { content?: string; result?: AnalysisResult } {
+  const session = sessions.get(filePath);
+  if (!session) return {};
+  return {
+    content: session.previousContent,
+    result: session.previousResult,
+  };
 }
 
 /**

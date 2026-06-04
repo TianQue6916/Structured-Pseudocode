@@ -32,7 +32,7 @@ import { registerSemanticTokenProvider, updateSemanticResult, fireSemanticTokens
 import { registerIndentDecorations, renderIndentLines, updateDecorationsFromAnalysis } from './indentDecoration';
 import { registerHoverFeature, updateEntities } from './hoverFeature';
 import { registerDiagnosticManager, updateDiagnostics, getDiagnosticStats } from './diagnosticManager';
-import { registerSessionManager, recordAnalysis, getSessionSummary } from './sessionManager';
+import { registerSessionManager, recordAnalysis, getSessionSummary, saveSessionContext, getSessionContext } from './sessionManager';
 import { generateCode as genCode, GenerationResult } from './bridgeClient';
 import { ensureTripletFiles, writeGeneratedCode, getTriplet } from './fileTriplet';
 import { registerDocLinks, updateGenerationData } from './docLinks';
@@ -163,6 +163,15 @@ export function activate(context: vscode.ExtensionContext): void {
       checkBridgeConnection();
     })
   );
+
+  // ---- 9. 每 3 秒检查桥接状态，断开时自动重连 ----
+  const healthTimer = setInterval(() => {
+    if (!bridgeConnected) {
+      console.log('[Mind] 尝试重连桥接...');
+      checkBridgeConnection();
+    }
+  }, 3000);
+  context.subscriptions.push({ dispose: () => clearInterval(healthTimer) });
 
   console.log('[Mind] 插件激活完成');
 }
@@ -307,7 +316,12 @@ async function triggerAnalysis(document: vscode.TextDocument): Promise<void> {
   const thisVersion = pendingAnalysisVersion;
   statusBarItem.text = '$(sync~spin) Mind 分析中...';
 
-  const result = await analyzeContent(content, config.bridgeHost, config.bridgePort);
+  // 获取上一次分析的上下文（保持对话连续）
+  const prevCtx = getSessionContext(filePath);
+  const result = await analyzeContent(
+    content, config.bridgeHost, config.bridgePort,
+    prevCtx.content, prevCtx.result
+  );
 
   // ---- 如果版本号变了，说明有更新请求已发出，丢弃本次结果 ----
   if (thisVersion !== pendingAnalysisVersion) {
@@ -320,6 +334,8 @@ async function triggerAnalysis(document: vscode.TextDocument): Promise<void> {
     setCachedResult(filePath, content, result);
     updateSemanticResult(filePath, result);
     recordAnalysis(filePath);
+    // 保存本次分析结果作为下次的上下文
+    saveSessionContext(filePath, content, result);
     applyAnalysisResult(document, result);
     fireSemanticTokensChanged();
 
