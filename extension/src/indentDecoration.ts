@@ -4,12 +4,12 @@
  * ============================================================
  * 在文本左侧绘制彩色垂直缩进线，表示逻辑从属关系。
  *
- * 效果:
- *   │ Count node num
- *   │ if num ≥ 30
- *   │   ├─ delete minimum num
- *   │   └─ add node count to total
- *   │ print result
+ * 效果（使用 ASCII 字符，兼容所有字体）:
+ *   | Count node num
+ *   | if num >= 30
+ *   |   |-- delete minimum num
+ *   |   \-- add node count to total
+ *   | print result
  *
  * 实现:
  *   - 顶层级 (level 0): 使用 │  前缀
@@ -92,28 +92,28 @@ function rebuildDecorationTypes(config: MindConfig): void {
   for (let l = 0; l < maxLevels; l++) {
     const color = config.indentColors[l] || config.indentColors[config.indentColors.length - 1];
 
-    // ├─ 分支（有后续兄弟）
+    // +-- 分支（有后续兄弟）
     branchDecos.push(
       vscode.window.createTextEditorDecorationType({
-        before: { contentText: '├─ ', color, fontWeight: 'normal', margin: '0 0 0 0' },
+        before: { contentText: '+-- ', color, fontWeight: 'normal', margin: '0 0 0 0' },
         opacity: '0.5',
         rangeBehavior: vscode.DecorationRangeBehavior.OpenOpen,
       })
     );
 
-    // └─ 结尾（最后一个子节点）
+    // \-- 结尾（最后一个子节点）
     lastChildDecos.push(
       vscode.window.createTextEditorDecorationType({
-        before: { contentText: '└─ ', color, fontWeight: 'normal', margin: '0 0 0 0' },
+        before: { contentText: '\\-- ', color, fontWeight: 'normal', margin: '0 0 0 0' },
         opacity: '0.5',
         rangeBehavior: vscode.DecorationRangeBehavior.OpenOpen,
       })
     );
 
-    // │ 延续竖线（该层级之后还有内容）
+    // | 延续竖线（该层级之后还有内容）
     contDecos.push(
       vscode.window.createTextEditorDecorationType({
-        before: { contentText: '│ ', color, fontWeight: 'normal', margin: '0 0 0 0' },
+        before: { contentText: '| ', color, fontWeight: 'normal', margin: '0 0 0 0' },
         opacity: '0.4',
         rangeBehavior: vscode.DecorationRangeBehavior.OpenOpen,
       })

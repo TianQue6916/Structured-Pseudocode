@@ -221,8 +221,9 @@ function registerCommands(context: vscode.ExtensionContext): void {
 
 /**
  * 检查桥接服务连接状态
+ * @returns true 表示已连接
  */
-async function checkBridgeConnection(): Promise<void> {
+async function checkBridgeConnection(): Promise<boolean> {
   const config = loadConfig();
   try {
     const response = await fetch(`http://${config.bridgeHost}:${config.bridgePort}/health`, {
@@ -239,11 +240,13 @@ async function checkBridgeConnection(): Promise<void> {
       statusBarItem.tooltip = '桥接服务异常';
       bridgeConnected = false;
     }
+    return bridgeConnected;
   } catch {
     bridgeConnected = false;
     statusBarItem.text = '$(warning) Mind (离线)';
-    statusBarItem.tooltip = '桥接服务未连接 — 仅显示基本语法高亮';
-    console.warn('[Mind] 桥接服务未连接，将使用离线模式');
+    statusBarItem.tooltip = '桥接服务未连接 — 请运行 mind-bridge';
+    console.warn('[Mind] 桥接服务未连接');
+    return false;
   }
 }
 
@@ -278,10 +281,19 @@ async function triggerAnalysis(document: vscode.TextDocument): Promise<void> {
     return;
   }
 
-  // ---- 2. 记录当前请求的版本号（用于去重） ----
+  // ---- 2. 先检查桥接服务是否在线 ----
+  const config = loadConfig();
+  const healthy = await checkBridgeConnection();
+  if (!healthy) {
+    statusBarItem.text = '$(warning) Mind (离线)';
+    statusBarItem.tooltip = '桥接服务未连接 — 请先启动 mind-bridge';
+    // 保留现有诊断，不发起 API 请求
+    return;
+  }
+
+  // ---- 3. 记录当前请求的版本号（用于去重） ----
   pendingAnalysisVersion++;
   const thisVersion = pendingAnalysisVersion;
-  const config = loadConfig();
   statusBarItem.text = '$(sync~spin) Mind 分析中...';
 
   const result = await analyzeContent(content, config.bridgeHost, config.bridgePort);
