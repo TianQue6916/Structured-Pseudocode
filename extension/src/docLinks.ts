@@ -84,22 +84,10 @@ class MindLinkProvider implements vscode.DocumentLinkProvider {
     const uris = getTripletUris(document.uri.fsPath);
 
     // 处理 Python 链接
-    if (result.py?.links) {
-      for (const link of result.py.links) {
+    if (result.links) {
+      for (const link of result.links) {
         const range = new vscode.Range(link.mindLine, 0, link.mindLine, 255);
-        // 目标: .py 文件的 link.fileLine 行
         const target = uris.pyUri.with({
-          fragment: `${link.fileLine + 1}`,  // VS Code 的行号从 1 起始
-        });
-        links.push(new vscode.DocumentLink(range, target));
-      }
-    }
-
-    // 处理 C 链接
-    if (result.c?.links) {
-      for (const link of result.c.links) {
-        const range = new vscode.Range(link.mindLine, 0, link.mindLine, 255);
-        const target = uris.cUri.with({
           fragment: `${link.fileLine + 1}`,
         });
         links.push(new vscode.DocumentLink(range, target));
@@ -121,36 +109,25 @@ class GeneratedFileLinkProvider implements vscode.DocumentLinkProvider {
     document: vscode.TextDocument,
     _token: vscode.CancellationToken
   ): vscode.ProviderResult<vscode.DocumentLink[]> {
-    // 查找生成数据中哪个条目的 py/c 代码属于此文件
     for (const [mindUri, result] of generationData) {
-      const fileCode = this.lang === 'py' ? result.py : result.c;
-      if (!fileCode || !fileCode.links) continue;
+      if (!result.links || result.links.length === 0) continue;
 
-      // 通过检查文件名来匹配（简单但有效）
       const mindPath = vscode.Uri.parse(mindUri).fsPath;
-      const triplet = getTripletUris(mindPath);
-      const targetUri = this.lang === 'py' ? triplet.pyUri : triplet.cUri;
+      const uris = getTripletUris(mindPath);
+      const targetUri = this.lang === 'py' ? uris.pyUri : uris.cUri;
+      if (document.uri.fsPath.toLowerCase() !== targetUri.fsPath.toLowerCase()) continue;
 
-      if (document.uri.fsPath.toLowerCase() !== targetUri.fsPath.toLowerCase()) {
-        continue; // 不匹配
-      }
-
-      // 为每个链接的反向创建链接
       const links: vscode.DocumentLink[] = [];
       const mindTarget = vscode.Uri.parse(mindUri).with({
-        fragment: `${fileCode.links[0].mindLine + 1}`,
+        fragment: `${result.links[0].mindLine + 1}`,
       });
 
-      for (const link of fileCode.links) {
-        // 在函数起始行添加"回到 .mind"链接
-        // 我们把它放在函数签名前面作为注释行
+      for (const link of result.links) {
         const range = new vscode.Range(link.fileLine, 0, link.fileLine, 100);
         links.push(new vscode.DocumentLink(range, mindTarget));
       }
-
       return links;
     }
-
     return [];
   }
 }

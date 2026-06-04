@@ -27,6 +27,13 @@ export interface MindConfig {
   naturalColor: string;      // 自然语言描述颜色
   commentColor: string;      // 注释颜色
   operatorColor: string;     // 运算符颜色
+  arrowColor: string;        // 指针/箭头颜色
+  builtinColor: string;      // 内置函数颜色
+  declarationColor: string;  // 声明关键字颜色
+  nlVerbColor: string;       // 自然语言动词颜色
+  nlNounColor: string;       // 自然语言名词颜色
+  parameterColor: string;    // 函数参数颜色
+  propertyColor: string;     // 属性访问颜色
   errorColor: string;        // 逻辑错误下划线颜色
   warningColor: string;      // 不理解/警告下划线颜色
   indentColors: string[];    // 缩进线颜色列表（按层级）
@@ -72,6 +79,13 @@ export function loadConfig(): MindConfig {
     naturalColor: cfg.get<string>('naturalColor', '#CE9178'),
     commentColor: cfg.get<string>('commentColor', '#6A9955'),
     operatorColor: cfg.get<string>('operatorColor', '#D4D4D4'),
+    arrowColor: cfg.get<string>('arrowColor', '#D4D4D4'),
+    builtinColor: cfg.get<string>('builtinColor', '#DCDCAA'),
+    declarationColor: cfg.get<string>('declarationColor', '#569CD6'),
+    nlVerbColor: cfg.get<string>('nlVerbColor', '#C586C0'),
+    nlNounColor: cfg.get<string>('nlNounColor', '#CE9178'),
+    parameterColor: cfg.get<string>('parameterColor', '#9CDCFE'),
+    propertyColor: cfg.get<string>('propertyColor', '#9CDCFE'),
     errorColor: cfg.get<string>('errorColor', '#F44747'),
     warningColor: cfg.get<string>('warningColor', '#6A9955'),
     indentColors: cfg.get<string[]>('indentColors', [

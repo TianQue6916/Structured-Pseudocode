@@ -7,146 +7,136 @@
     { "include": "#comments" },
     { "include": "#strings" },
     { "include": "#numbers" },
-    { "include": "#keywords" },
+    { "include": "#control-keywords" },
+    { "include": "#declaration-keywords" },
+    { "include": "#python-keywords" },
+    { "include": "#c-keywords" },
+    { "include": "#builtin-functions" },
     { "include": "#types" },
     { "include": "#constants" },
     { "include": "#function-calls" },
     { "include": "#function-definitions" },
     { "include": "#pointers" },
-    { "include": "#operators" },
+    { "include": "#comparison-operators" },
+    { "include": "#arithmetic-operators" },
+    { "include": "#assignment-operators" },
+    { "include": "#logical-operators" },
     { "include": "#punctuation" },
-    { "include": "#natural-language" }
+    { "include": "#identifiers" }
   ],
   "repository": {
     "comments": {
       "patterns": [
-        {
-          "name": "comment.line.number-sign.mind",
-          "match": "#.*$",
-          "comment": "Python 风格 # 注释"
-        },
-        {
-          "name": "comment.line.double-slash.mind",
-          "match": "\\/\\/.*$",
-          "comment": "C 风格 // 注释"
-        },
-        {
-          "name": "comment.block.mind",
-          "begin": "/\\*",
-          "end": "\\*/",
-          "comment": "C 风格 /* */ 块注释"
-        }
+        { "name": "comment.line.number-sign.mind", "match": "#.*$" },
+        { "name": "comment.line.double-slash.mind", "match": "//.*$" },
+        { "name": "comment.block.mind", "begin": "/\\*", "end": "\\*/" }
       ]
     },
-
     "strings": {
       "patterns": [
         {
           "name": "string.quoted.double.mind",
-          "begin": "\"",
-          "end": "\"",
-          "beginCaptures": {
-            "0": { "name": "punctuation.definition.string.begin.mind" }
-          },
-          "endCaptures": {
-            "0": { "name": "punctuation.definition.string.end.mind" }
-          }
+          "begin": "\"", "end": "\"",
+          "beginCaptures": { "0": { "name": "punctuation.definition.string.begin.mind" } },
+          "endCaptures": { "0": { "name": "punctuation.definition.string.end.mind" } }
         },
         {
           "name": "string.quoted.single.mind",
-          "begin": "'",
-          "end": "'",
-          "beginCaptures": {
-            "0": { "name": "punctuation.definition.string.begin.mind" }
-          },
-          "endCaptures": {
-            "0": { "name": "punctuation.definition.string.end.mind" }
-          }
+          "begin": "'", "end": "'"
         }
       ]
     },
-
     "numbers": {
-      "name": "constant.numeric.mind",
-      "match": "\\b(?:0[xX][0-9a-fA-F]+|0[bB][01]+|0[oO][0-7]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b"
+      "patterns": [
+        { "name": "constant.numeric.hex.mind", "match": "\\b0[xX][0-9a-fA-F]+\\b" },
+        { "name": "constant.numeric.binary.mind", "match": "\\b0[bB][01]+\\b" },
+        { "name": "constant.numeric.float.mind", "match": "\\b\\d+\\.\\d+(?:[eE][+-]?\\d+)?\\b" },
+        { "name": "constant.numeric.integer.mind", "match": "\\b\\d+\\b" }
+      ]
     },
-
-    "keywords": {
+    "control-keywords": {
       "name": "keyword.control.mind",
-      "match": "\\b(if|else|elif|while|for|switch|case|default|break|continue|return|def|class|struct|enum|union|typedef|import|from|as|pass|yield|lambda|with|try|except|finally|raise|assert|del|global|nonlocal|in|is|and|or|not|void|const|static|extern|register|volatile|inline|sizeof|typedef)\\b",
-      "comment": "控制流关键字 + Python/C 关键字"
+      "match": "\\b(if|else|elif|while|for|switch|case|default|break|continue|return|goto|do)\\b"
     },
-
+    "declaration-keywords": {
+      "name": "keyword.declaration.mind",
+      "match": "\\b(def|class|struct|enum|union|typedef|interface|impl|trait|fun|fn|function|let|var|const|val|mut)\\b"
+    },
+    "python-keywords": {
+      "name": "keyword.other.python.mind",
+      "match": "\\b(pass|yield|lambda|with|try|except|finally|raise|assert|del|global|nonlocal|in|is|and|or|not|as|from|import|async|await|self|cls)\\b"
+    },
+    "c-keywords": {
+      "name": "keyword.other.c.mind",
+      "match": "\\b(static|extern|register|volatile|inline|restrict|sizeof|auto|signed|unsigned)\\b"
+    },
+    "builtin-functions": {
+      "name": "support.function.builtin.mind",
+      "match": "\\b(print|len|range|int|str|float|bool|list|dict|set|tuple|min|max|sum|abs|round|sorted|reversed|enumerate|zip|map|filter|open|read|write|append|pop|push|peek|update|delete|insert|remove|clear|copy|count|index|extend|sort|reverse|find|replace|split|join|strip|format|input|type|super|isinstance|issubclass|hasattr|getattr|setattr)\\b"
+    },
     "types": {
       "name": "storage.type.mind",
-      "match": "\\b(int|float|double|char|bool|_Bool|short|long|signed|unsigned|size_t|ssize_t|uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|string|list|dict|tuple|set|True|False|None|nullptr|NULL|void|auto)\\b",
-      "comment": "类型关键字"
+      "match": "\\b(int|float|double|char|bool|_Bool|short|long|size_t|ssize_t|uint8_t|uint16_t|uint32_t|uint64_t|int8_t|int16_t|int32_t|int64_t|string|void|auto|nullptr_t|wchar_t|FILE|pid_t|pthread_t)\\b"
     },
-
     "constants": {
-      "name": "constant.language.mind",
-      "match": "\\b(TRUE|FALSE|NULL|None|nullptr|true|false|null|nil|PI|E|INFINITY|NAN|EOF|MAX|MIN)\\b"
+      "patterns": [
+        { "name": "constant.language.boolean.mind", "match": "\\b(true|false|TRUE|FALSE)\\b" },
+        { "name": "constant.language.null.mind", "match": "\\b(null|NULL|None|nil|nullptr|undefined|NaN)\\b" },
+        { "name": "constant.language.math.mind", "match": "\\b(PI|E|INFINITY|NAN|EOF|MAX|MIN|INT_MAX|INT_MIN)\\b" }
+      ]
     },
-
     "function-calls": {
-      "name": "support.function.c.mind",
+      "name": "entity.name.function.call.mind",
       "match": "\\b([a-zA-Z_][a-zA-Z0-9_]*)\\s*(?=\\()",
-      "captures": {
-        "1": { "name": "entity.name.function.mind" }
-      },
-      "comment": "C/Python 函数调用: func(...)"
+      "captures": { "1": { "name": "entity.name.function.mind" } }
     },
-
     "function-definitions": {
       "patterns": [
         {
           "name": "meta.function.python.mind",
           "match": "\\b(def)\\s+([a-zA-Z_][a-zA-Z0-9_]*)",
           "captures": {
-            "1": { "name": "keyword.control.mind" },
-            "2": { "name": "entity.name.function.mind" }
-          },
-          "comment": "Python 函数定义: def name"
+            "1": { "name": "keyword.declaration.mind" },
+            "2": { "name": "entity.name.function.definition.mind" }
+          }
         },
         {
           "name": "meta.function.c.mind",
-          "match": "\\b((?:int|float|double|char|void|bool|long|short|unsigned|signed|size_t|struct\\s+[a-zA-Z_][a-zA-Z0-9_]*|const)\\s+[*\\s]*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
+          "match": "\\b((?:int|float|double|char|void|bool|long|short|unsigned|signed|size_t|static|const)\\s+[*\\s]*)([a-zA-Z_][a-zA-Z0-9_]*)\\s*\\(",
           "captures": {
             "1": { "name": "storage.type.mind" },
-            "2": { "name": "entity.name.function.mind" }
-          },
-          "comment": "C 函数定义: type name(...)"
+            "2": { "name": "entity.name.function.definition.mind" }
+          }
         }
       ]
     },
-
     "pointers": {
       "name": "keyword.operator.pointer.mind",
-      "match": "(->|→|\\.\\*|::)",
-      "comment": "指针/箭头/作用域运算符"
+      "match": "(->|→|\\.\\*|::|=>)"
     },
-
-    "operators": {
-      "name": "keyword.operator.mind",
-      "match": "(?:[+\\-*/%&|^~!<>=]=?|<=>|&&|\\|\\||\\+\\+|--|->|→|≥|≤|≠|≡|∷)",
-      "comment": "运算符 + 数学符号"
+    "comparison-operators": {
+      "name": "keyword.operator.comparison.mind",
+      "match": "(===|!==|==|!=|>=|<=|>|<|≤|≥|≠|≡)"
     },
-
+    "arithmetic-operators": {
+      "name": "keyword.operator.arithmetic.mind",
+      "match": "(\\+\\+|--|\\+=|-=|\\*=|/=|%=|\\+|-|\\*|/|%)"
+    },
+    "assignment-operators": {
+      "name": "keyword.operator.assignment.mind",
+      "match": "(=|:=|->|←|→)"
+    },
+    "logical-operators": {
+      "name": "keyword.operator.logical.mind",
+      "match": "(&&|\\|\\||!|\\|\\||\\&\\&|and|or|not)"
+    },
     "punctuation": {
       "name": "punctuation.mind",
       "match": "[(){}\\[\\],;:]"
     },
-
-    "natural-language": {
-      "patterns": [
-        {
-          "name": "variable.other.noun.mind",
-          "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b",
-          "comment": "普通标识符作为名词/实体名（兜底规则，需在最后匹配）"
-        }
-      ],
-      "comment": "自然语言和标识符。匹配未被前面规则捕获的词汇。"
+    "identifiers": {
+      "name": "variable.other.mind",
+      "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
     }
-  },
-  "comment": "Mind Language TextMate 语法。定义了 18 种语义分类的语法高亮规则，支持 C 风格、Python 风格和自然语言混合。"
+  }
 }

@@ -62,37 +62,66 @@ export function fireSemanticTokensChanged(): void {
  * 索引与 TYPE_MAP.type 一一对应
  */
 const TOKEN_TYPES: string[] = [
-  'keyword',   // 0: 控制流关键字 + 自然语言动词
-  'function',  // 1: 函数调用/定义
-  'variable',  // 2: 变量/实体
-  'type',      // 3: 类型关键字
-  'number',    // 4: 数字/常量
-  'string',    // 5: 字符串/字符
-  'operator',  // 6: 运算符
-  'comment',   // 7: 注释
+  'keyword',       // 0: 控制流关键字
+  'function',      // 1: 函数调用
+  'variable',      // 2: 变量引用
+  'type',          // 3: 类型关键字
+  'number',        // 4: 数字常量
+  'string',        // 5: 字符串
+  'operator',      // 6: 运算符
+  'comment',       // 7: 注释
+  'method',        // 8: 方法调用
+  'declaration',   // 9: 声明关键字 (def/let/const)
+  'parameter',     // 10: 函数参数
+  'property',      // 11: 属性访问
+  'nlVerb',        // 12: 自然语言动词
+  'nlNoun',        // 13: 自然语言名词
+  'builtin',       // 14: 内置函数/关键字
+  'entity',        // 15: 实体名
+  'arrow',         // 16: 指针/箭头
+  'macro',         // 17: 特殊常量
 ];
 
 /**
  * AI 18 种 token 类型 → VS Code 内部类型索引
  */
 const TYPE_MAP: Record<string, number> = {
+  // 控制流
   'keyword':   0,   // keyword
-  'c-call':    1,   // function
-  'py-def':    1,   // function
-  'c-def':     1,   // function
-  'decl':      2,   // variable
-  'ref':       2,   // variable
-  'type':      3,   // type
-  'user-type': 3,   // type
-  'nl-verb':   0,   // keyword（复用）
-  'nl-noun':   2,   // variable（复用）
-  'operator':  6,   // operator
-  'ptr-op':    6,   // operator
-  'number':    4,   // number
-  'const':     4,   // number（复用）
-  'string':    5,   // string
-  'char':      5,   // string
+  'decl':      9,   // declaration（声明关键字）
+
+  // 函数
+  'c-call':    1,   // function（C函数调用）
+  'py-def':    8,   // method（Python函数定义）
+  'c-def':     8,   // method（C函数定义）
+  'builtin':   14,  // builtin（内置函数）
+
+  // 变量
+  'ref':       2,   // variable（变量引用）
+  'param':     10,  // parameter（函数参数）
+  'prop':      11,  // property（属性）
+
+  // 类型
+  'type':      3,   // type（类型关键字）
+  'user-type': 3,   // type（自定义类型）
+
+  // 自然语言
+  'nl-verb':   12,  // nlVerb（自然语言动词）
+  'nl-noun':   13,  // nlNoun（自然语言名词）
+
+  // 运算
+  'operator':  6,   // operator（运算符）
+  'ptr-op':    16,  // arrow（指针/箭头）
+
+  // 字面量
+  'number':    4,   // number（数字）
+  'const':     17,  // macro（特殊常量）
+  'string':    5,   // string（字符串）
+  'char':      5,   // string（字符）
+
+  // 注释
   'comment':   7,   // comment
+
   // punct 不映射 → 跳过
 };
 

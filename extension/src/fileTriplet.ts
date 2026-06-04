@@ -66,6 +66,15 @@ export function getTriplet(mindPath: string): FileTriplet {
 }
 
 /**
+ * 获取单文件（只 Python）
+ */
+export function getPyPath(mindPath: string): string {
+  const { dir, base } = splitPath(mindPath);
+  const sep = mindPath.includes('/') ? '/' : '\\';
+  return `${dir}${sep}${base}.py`;
+}
+
+/**
  * 获取 .mind 文件对应的三文件 URI 列表
  * 供 DocumentLinkProvider 等使用
  */

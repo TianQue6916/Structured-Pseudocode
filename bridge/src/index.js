@@ -146,8 +146,7 @@ app.post('/generate', async (req, res) => {
     // 检查是否有 # @d 注释
     if (!hasQueryComments(content)) {
       return res.json({
-        py: { code: '', links: [] },
-        c: { code: '', links: [] },
+        code: '', links: [],
         note: '未检测到 # @d 注释，无需生成代码'
       });
     }
@@ -155,9 +154,8 @@ app.post('/generate', async (req, res) => {
     console.log(`[生成请求] 内容长度: ${content.length} 字符`);
     const result = await generateCode(content);
 
-    const pyLen = result.py?.code?.length || 0;
-    const cLen = result.c?.code?.length || 0;
-    console.log(`[生成完成] Python: ${pyLen}字符, C: ${cLen}字符, 链接数: ${result.py?.links?.length || 0}`);
+    const codeLen = result.code?.length || 0;
+    console.log(`[生成完成] 代码: ${codeLen}字符, 链接数: ${result.links?.length || 0}`);
 
     saveTranscript(content, 'generate', JSON.stringify(result), null);
 
@@ -175,8 +173,7 @@ app.post('/generate', async (req, res) => {
     }
 
     res.status(500).json({
-      py: { code: '', links: [] },
-      c: { code: '', links: [] },
+      code: '', links: [],
       error: error.message
     });
   }

@@ -166,8 +166,12 @@ export interface FileCode {
 
 /** 代码生成响应 */
 export interface GenerationResult {
-  py: FileCode;
-  c: FileCode;
+  code: string;
+  links: Array<{
+    mindLine: number;
+    fileLine: number;
+    name: string;
+  }>;
   /** 桥接端返回的备注 */
   note?: string;
   /** 错误信息 */

@@ -121,6 +121,48 @@
           "format": "color",
           "description": "运算符颜色"
         },
+        "mind.arrowColor": {
+          "type": "string",
+          "default": "#D4D4D4",
+          "format": "color",
+          "description": "指针/箭头颜色 (->, =&gt;, =&gt;)"
+        },
+        "mind.builtinColor": {
+          "type": "string",
+          "default": "#DCDCAA",
+          "format": "color",
+          "description": "内置函数颜色 (print, len, range 等)"
+        },
+        "mind.declarationColor": {
+          "type": "string",
+          "default": "#569CD6",
+          "format": "color",
+          "description": "声明关键字颜色 (def, let, const, class)"
+        },
+        "mind.nlVerbColor": {
+          "type": "string",
+          "default": "#C586C0",
+          "format": "color",
+          "description": "自然语言动词颜色 (Count, delete, add 等)"
+        },
+        "mind.nlNounColor": {
+          "type": "string",
+          "default": "#CE9178",
+          "format": "color",
+          "description": "自然语言名词颜色 (node num, total 等)"
+        },
+        "mind.parameterColor": {
+          "type": "string",
+          "default": "#9CDCFE",
+          "format": "color",
+          "description": "函数参数颜色"
+        },
+        "mind.propertyColor": {
+          "type": "string",
+          "default": "#9CDCFE",
+          "format": "color",
+          "description": "属性访问颜色"
+        },
         "mind.errorColor": {
           "type": "string",
           "default": "#F44747",
@@ -190,29 +232,42 @@
     },
     "commands": [
       {
-        "command": "mind.analyzeNow",
-        "title": "Mind: 立即分析当前文件"
+        "command": "mind.analyzeCode",
+        "title": "Mind: 分析代码变量"
       },
       {
-        "command": "mind.restartBridge",
-        "title": "Mind: 重新连接桥接服务"
+        "command": "mind.analyzeAI",
+        "title": "Mind: AI 检测注释并生成"
       },
       {
         "command": "mind.showStatus",
-        "title": "Mind: 显示分析状态"
+        "title": "Mind: 显示状态/Token"
+      },
+      {
+        "command": "mind.restartBridge",
+        "title": "Mind: 重新连接桥接"
       }
     ],
     "menus": {
       "editor/title": [
         {
-          "command": "mind.analyzeNow",
+          "command": "mind.analyzeCode",
+          "when": "editorLangId == mind",
+          "group": "navigation"
+        },
+        {
+          "command": "mind.analyzeAI",
           "when": "editorLangId == mind",
           "group": "navigation"
         }
       ],
       "editor/context": [
         {
-          "command": "mind.analyzeNow",
+          "command": "mind.analyzeCode",
+          "when": "editorLangId == mind"
+        },
+        {
+          "command": "mind.analyzeAI",
           "when": "editorLangId == mind"
         }
       ]
