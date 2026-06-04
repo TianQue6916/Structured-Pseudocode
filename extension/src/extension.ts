@@ -141,23 +141,25 @@ async function checkBridgeConnection(): Promise<boolean> {
 
 async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boolean): Promise<void> {
   try {
-  if (!document || document.languageId !== 'mind') return;
+  if (!document || document.languageId !== 'mind') { statusBarItem.text = '$(symbol-namespace) Mind'; return; }
 
   const filePath = document.uri.toString();
   const content = document.getText();
-  if (!content.trim()) return;
+  if (!content.trim()) { statusBarItem.text = '$(symbol-namespace) Mind'; return; }
 
   const cached = getCachedResult(filePath, content);
   if (cached) {
     updateSemanticResult(filePath, cached);
     fireSemanticTokensChanged();
     applyAnalysisResult(document, cached);
+    statusBarItem.text = '$(symbol-namespace) Mind';
     return;
   }
 
   const config = loadConfig();
   const result = await analyzeContent(content, config.bridgeHost, config.bridgePort, document.uri.fsPath);
   if (!result) {
+    statusBarItem.text = '$(warning) Mind';
     vscode.window.showErrorMessage('分析失败：桥接服务无响应，请检查桥接是否启动');
     return;
   }
