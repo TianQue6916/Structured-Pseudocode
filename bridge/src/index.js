@@ -13,6 +13,7 @@ import cors from 'cors';             // 跨域支持（VS Code 扩展请求）
 import { analyzeMindContent } from './mindAnalyzer.js';
 import { generateCode, hasQueryComments } from './codeGenerator.js';
 import { saveTranscript } from './transcriptSaver.js';
+import { saveReasonixSession } from './reasonixSession.js';
 
 // 读取 .env 配置
 import 'dotenv/config';
@@ -83,6 +84,8 @@ app.post('/analyze', async (req, res) => {
 
     // 保存转录到 ~/.reasonix/mind-transcripts/
     saveTranscript(content, 'analyze', JSON.stringify(result), result.tokenUsage);
+    // 保存会话到 ~/.reasonix/sessions/（供 reasonix sessions 查看和继续）
+    saveReasonixSession(content, JSON.stringify(result), result.tokenUsage);
 
     res.json(result);
 
