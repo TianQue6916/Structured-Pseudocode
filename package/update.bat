@@ -37,6 +37,11 @@ echo [2/2] Installing...
 code --install-extension "%FOUND%" --force
 echo [OK] Installed
 echo.
+echo  Open .mind file -^> two buttons in editor title:
+echo    [分析代码变量]      - analyze variables, colors, diagnostics
+echo    [AI检测注释并生成]  - detect # @d and generate Python
+echo    [状态栏 Mind]       - view Token usage panel
+echo.
 echo Reload VS Code: Ctrl+Shift+P ^> Developer: Reload Window
 echo.
 pause
