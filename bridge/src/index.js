@@ -12,6 +12,7 @@ import express from 'express';       // Web 框架
 import cors from 'cors';             // 跨域支持（VS Code 扩展请求）
 import { analyzeMindContent } from './mindAnalyzer.js';
 import { generateCode, hasQueryComments } from './codeGenerator.js';
+import { saveTranscript } from './transcriptSaver.js';
 
 // 读取 .env 配置
 import 'dotenv/config';
@@ -79,6 +80,9 @@ app.post('/analyze', async (req, res) => {
     const result = await analyzeMindContent(content);
     const tu = result.tokenUsage || {};
     console.log(`[分析完成] tokens: ${result.tokens?.length || 0}, entities: ${result.entities?.length || 0}, diagnostics: ${result.diagnostics?.length || 0} | token: ↑${tu.prompt || '?'} ↓${tu.completion || '?'} (缓存命中: ${tu.cached || 0})`);
+
+    // 保存转录到 ~/.reasonix/mind-transcripts/
+    saveTranscript(content, 'analyze', JSON.stringify(result), result.tokenUsage);
 
     res.json(result);
 
@@ -151,6 +155,8 @@ app.post('/generate', async (req, res) => {
     const pyLen = result.py?.code?.length || 0;
     const cLen = result.c?.code?.length || 0;
     console.log(`[生成完成] Python: ${pyLen}字符, C: ${cLen}字符, 链接数: ${result.py?.links?.length || 0}`);
+
+    saveTranscript(content, 'generate', JSON.stringify(result), null);
 
     res.json(result);
 
