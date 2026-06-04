@@ -134,7 +134,22 @@ async function checkBridgeConnection(): Promise<boolean> {
   } catch {
     bridgeConnected = false;
     statusBarItem.text = '$(warning) Mind (离线)';
-    statusBarItem.tooltip = '桥接未连接';
+    statusBarItem.tooltip = '桥接未连接 — 点击状态栏查看启动选项';
+    // 提示用户启动桥接
+    vscode.window.showWarningMessage(
+      'Mind 桥接服务未连接',
+      '启动桥接', '查看说明'
+    ).then(choice => {
+      if (choice === '启动桥接') {
+        const homedir = require('os').homedir();
+        const bridgeDir = require('path').join(homedir, 'Desktop', '工具箱', 'AI   文件夹', 'mind-bridge');
+        const terminal = vscode.window.createTerminal('Mind Bridge');
+        terminal.sendText(`cd "${bridgeDir}" && npm start`);
+        terminal.show();
+      } else if (choice === '查看说明') {
+        vscode.env.openExternal(vscode.Uri.parse('https://github.com/TianQue6916/Structured-Pseudocode#readme'));
+      }
+    });
     return false;
   }
 }
