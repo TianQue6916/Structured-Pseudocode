@@ -63,12 +63,13 @@ export function activate(context: vscode.ExtensionContext): void {
 function registerCommands(context: vscode.ExtensionContext): void {
   // Button 1: Analyze code (variables, colors, diagnostics only)
   context.subscriptions.push(
-    vscode.commands.registerCommand('mind.analyzeCode', () => {
+    vscode.commands.registerCommand('mind.analyzeCode', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'mind') {
         vscode.window.showInformationMessage('请打开一个 .mind 文件');
         return;
       }
+      await checkBridgeConnection();
       if (!bridgeConnected) {
         vscode.window.showWarningMessage('桥接服务未连接，请先启动 mind-bridge');
         return;
@@ -80,12 +81,13 @@ function registerCommands(context: vscode.ExtensionContext): void {
 
     // Button 2: Fix colors - re-analyze and force token update
   context.subscriptions.push(
-    vscode.commands.registerCommand('mind.fixColors', () => {
+    vscode.commands.registerCommand('mind.fixColors', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'mind') {
         vscode.window.showInformationMessage('请打开一个 .mind 文件');
         return;
       }
+      await checkBridgeConnection();
       if (!bridgeConnected) {
         vscode.window.showWarningMessage('桥接服务未连接');
         return;
@@ -97,12 +99,13 @@ function registerCommands(context: vscode.ExtensionContext): void {
 
   // Button 3: Build hover cache - fill entity data for instant hover
   context.subscriptions.push(
-    vscode.commands.registerCommand('mind.buildHover', () => {
+    vscode.commands.registerCommand('mind.buildHover', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'mind') {
         vscode.window.showInformationMessage('请打开一个 .mind 文件');
         return;
       }
+      await checkBridgeConnection();
       if (!bridgeConnected) {
         vscode.window.showWarningMessage('桥接服务未连接');
         return;
@@ -114,14 +117,15 @@ function registerCommands(context: vscode.ExtensionContext): void {
 
 // Button 2: AI detection of # @d comments (generate code, answer questions)
   context.subscriptions.push(
-    vscode.commands.registerCommand('mind.analyzeAI', () => {
+    vscode.commands.registerCommand('mind.analyzeAI', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'mind') {
         vscode.window.showInformationMessage('请打开一个 .mind 文件');
         return;
       }
+      await checkBridgeConnection();
       if (!bridgeConnected) {
-        vscode.window.showWarningMessage('桥接服务未连接，请先启动 mind-bridge');
+        vscode.window.showWarningMessage('桥接服务未连接');
         return;
       }
       const content = editor.document.getText();
