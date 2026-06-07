@@ -307,3 +307,6 @@ export function deactivate(): void {
   console.log('[Mind] 插件停用');
   bridgeConnected = false;
 }
+
+// 确保 esbuild 不 tree-shake 掉导出
+module.exports = { activate, deactivate };
