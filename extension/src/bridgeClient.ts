@@ -97,7 +97,7 @@ export async function analyzeContent(
 ): Promise<AnalysisResult | null> {
   const url = `http://${host}:${port}/analyze`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 秒超时
+  const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 秒超时（DeepSeek 可能慢）
 
   try {
     const body: Record<string, unknown> = { content };
