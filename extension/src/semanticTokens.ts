@@ -106,8 +106,8 @@ const TYPE_MAP: Record<string, number> = {
   'user-type': 3,   // type（自定义类型）
 
   // 自然语言
-  'nl-verb':   12,  // nlVerb（自然语言动词）
-  'nl-noun':   13,  // nlNoun（自然语言名词）
+  'nl-verb':   0,   // keyword（动词 → 控制流蓝）
+  'nl-noun':   2,   // variable（名词 → 变量青/白）
 
   // 运算
   'operator':  6,   // operator（运算符）
