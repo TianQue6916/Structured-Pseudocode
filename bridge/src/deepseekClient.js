@@ -53,7 +53,7 @@ export async function callDeepSeek(systemPrompt, userContent) {
         { role: 'user', content: userContent }
       ],
       temperature: 0.1,           // 低温 → 输出更稳定、可预测
-      max_tokens: 8192,           // 足够返回分析结果
+      max_tokens: 16384,          // 足够返回分析结果（含推理 token）
       stream: false                // 非流式，直接获取完整 JSON
     });
 
