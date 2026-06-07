@@ -8,15 +8,15 @@
 // 监听端口: 3456（可通过 .env 中 PORT 修改）
 // ============================================================
 
+// ===== 最先执行：加载 .env =====
+import 'dotenv/config';
+
 import express from 'express';       // Web 框架
 import cors from 'cors';             // 跨域支持（VS Code 扩展请求）
 import { analyzeMindContent } from './mindAnalyzer.js';
 import { generateCode, hasQueryComments } from './codeGenerator.js';
 import { saveTranscript } from './transcriptSaver.js';
 import { saveReasonixSession } from './reasonixSession.js';
-
-// 读取 .env 配置
-import 'dotenv/config';
 
 const app = express();
 const PORT = process.env.PORT || 3456;
