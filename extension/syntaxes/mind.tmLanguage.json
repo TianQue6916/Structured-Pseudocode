@@ -16,6 +16,7 @@
     { "include": "#decorators" },
     { "include": "#annotations" },
     { "include": "#operators" },
+    { "include": "#chinese" },
     { "include": "#identifiers" }
   ],
   "repository": {
@@ -87,6 +88,10 @@
         { "name": "keyword.operator.assignment.mind", "match": ":=|->|←|→|=>" },
         { "name": "keyword.operator.logical.mind", "match": "&&|\\|\\||!" }
       ]
+    },
+    "chinese": {
+      "name": "variable.other.chinese.mind",
+      "match": "[\\u4e00-\\u9fff\\u3000-\\u303f]+"
     },
     "identifiers": {
       "name": "variable.other.mind",

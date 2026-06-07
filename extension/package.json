@@ -237,6 +237,16 @@
         }
       }
     },
+    "configurationDefaults": {
+      "[mind]": {
+        "editor.semanticTokenColorCustomizations": {
+          "rules": {
+            "nlVerb": "#C586C0",
+            "nlNoun": "#CE9178"
+          }
+        }
+      }
+    },
     "commands": [
       {
         "command": "mind.analyzeCode",
