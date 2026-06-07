@@ -66,8 +66,7 @@ goto MENU
 echo.
 echo ====== 使用说明 ======
 echo VS Code 打开 .mind 文件后:
-echo   按 [分析代码变量] - 分析颜色/诊断
-echo   按 [AI检测注释] - 检测 # @d 生成代码
+echo   按 [分析代码变量]  [AI修正颜色]  [AI创建悬停]  [AI检测注释] - 检测 # @d 生成代码
 echo   状态栏点 Mind - 查看 Token 用量
 echo ======================
 
