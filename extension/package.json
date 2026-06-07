@@ -243,6 +243,14 @@
         "title": "Mind: 分析代码变量"
       },
       {
+        "command": "mind.fixColors",
+        "title": "Mind: AI 修正颜色"
+      },
+      {
+        "command": "mind.buildHover",
+        "title": "Mind: AI 创建悬停缓存"
+      },
+      {
         "command": "mind.analyzeAI",
         "title": "Mind: AI 检测注释并生成"
       },
@@ -263,6 +271,16 @@
           "group": "navigation"
         },
         {
+          "command": "mind.fixColors",
+          "when": "editorLangId == mind",
+          "group": "navigation"
+        },
+        {
+          "command": "mind.buildHover",
+          "when": "editorLangId == mind",
+          "group": "navigation"
+        },
+        {
           "command": "mind.analyzeAI",
           "when": "editorLangId == mind",
           "group": "navigation"
@@ -271,6 +289,14 @@
       "editor/context": [
         {
           "command": "mind.analyzeCode",
+          "when": "editorLangId == mind"
+        },
+        {
+          "command": "mind.fixColors",
+          "when": "editorLangId == mind"
+        },
+        {
+          "command": "mind.buildHover",
           "when": "editorLangId == mind"
         },
         {

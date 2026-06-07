@@ -78,7 +78,41 @@ function registerCommands(context: vscode.ExtensionContext): void {
     })
   );
 
-  // Button 2: AI detection of # @d comments (generate code, answer questions)
+    // Button 2: Fix colors - re-analyze and force token update
+  context.subscriptions.push(
+    vscode.commands.registerCommand('mind.fixColors', () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.document.languageId !== 'mind') {
+        vscode.window.showInformationMessage('请打开一个 .mind 文件');
+        return;
+      }
+      if (!bridgeConnected) {
+        vscode.window.showWarningMessage('桥接服务未连接');
+        return;
+      }
+      statusBarItem.text = '$(sync~spin) Mind 修正颜色...';
+      triggerAnalysis(editor.document, false);
+    })
+  );
+
+  // Button 3: Build hover cache - fill entity data for instant hover
+  context.subscriptions.push(
+    vscode.commands.registerCommand('mind.buildHover', () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.document.languageId !== 'mind') {
+        vscode.window.showInformationMessage('请打开一个 .mind 文件');
+        return;
+      }
+      if (!bridgeConnected) {
+        vscode.window.showWarningMessage('桥接服务未连接');
+        return;
+      }
+      statusBarItem.text = '$(sync~spin) Mind 构建悬停...';
+      triggerAnalysis(editor.document, false);
+    })
+  );
+
+// Button 2: AI detection of # @d comments (generate code, answer questions)
   context.subscriptions.push(
     vscode.commands.registerCommand('mind.analyzeAI', () => {
       const editor = vscode.window.activeTextEditor;
