@@ -142,11 +142,15 @@ export async function analyzeContent(
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
         throw new Error('请求超时（120秒），DeepSeek API 响应过慢，请稍后重试');
-      } else if (error.message.includes('fetch') || error.message.includes('ECONNREFUSED')) {
-        throw new Error('无法连接到桥接服务');
-      } else {
-        throw new Error('通信错误: ' + error.message);
       }
+      const msg = error.message;
+      if (msg.includes('ECONNREFUSED') || msg.includes('fetch failed') || msg.includes('ENOTFOUND')) {
+        throw new Error('桥接服务未运行（请确保 mind-bridge 已启动）');
+      }
+      if (msg.includes('ERR_CONNECTION') || msg.includes('ETIMEDOUT')) {
+        throw new Error('桥接连接超时（请检查网络或防火墙）');
+      }
+      throw new Error('网络错误: ' + msg.substring(0, 120));
     }
     throw new Error('未知网络错误');
   }
