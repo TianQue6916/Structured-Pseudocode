@@ -131,7 +131,7 @@ export async function analyzeContent(
 
     // ---- 运行时类型校验（修复 Bug 5） ----
     if (!isValidAnalysisResult(data)) {
-      console.warn('[Mind Bridge] 响应格式不正确，已忽略');
+      console.warn('[Mind Bridge] 响应格式不正确，已忽略. 原始数据:', JSON.stringify(data).substring(0, 200));
       return null;
     }
 
