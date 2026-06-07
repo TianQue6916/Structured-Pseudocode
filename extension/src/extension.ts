@@ -70,10 +70,7 @@ function registerCommands(context: vscode.ExtensionContext): void {
         return;
       }
       await checkBridgeConnection();
-      if (!bridgeConnected) {
-        vscode.window.showWarningMessage('桥接服务未连接，请先启动 mind-bridge');
-        return;
-      }
+      if (!bridgeConnected) return;
       statusBarItem.text = '$(sync~spin) Mind 分析中...';
       triggerAnalysis(editor.document, false);
     })
@@ -88,10 +85,7 @@ function registerCommands(context: vscode.ExtensionContext): void {
         return;
       }
       await checkBridgeConnection();
-      if (!bridgeConnected) {
-        vscode.window.showWarningMessage('桥接服务未连接');
-        return;
-      }
+      if (!bridgeConnected) return;
       statusBarItem.text = '$(sync~spin) Mind 修正颜色...';
       triggerAnalysis(editor.document, false);
     })
@@ -106,10 +100,7 @@ function registerCommands(context: vscode.ExtensionContext): void {
         return;
       }
       await checkBridgeConnection();
-      if (!bridgeConnected) {
-        vscode.window.showWarningMessage('桥接服务未连接');
-        return;
-      }
+      if (!bridgeConnected) return;
       statusBarItem.text = '$(sync~spin) Mind 构建悬停...';
       triggerAnalysis(editor.document, false);
     })
@@ -124,10 +115,7 @@ function registerCommands(context: vscode.ExtensionContext): void {
         return;
       }
       await checkBridgeConnection();
-      if (!bridgeConnected) {
-        vscode.window.showWarningMessage('桥接服务未连接');
-        return;
-      }
+      if (!bridgeConnected) return;
       const content = editor.document.getText();
       if (!content.includes('@d')) {
         vscode.window.showInformationMessage('未检测到 # @d 注释，请添加后重试');
