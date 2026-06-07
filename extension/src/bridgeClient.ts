@@ -118,11 +118,13 @@ export async function analyzeContent(
     clearTimeout(timeoutId);
 
     if (!response.ok) {
-      // 尝试读取桥接返回的错误详情
       let errMsg = `HTTP ${response.status}`;
-      try { const err = await response.json(); if (err.error) errMsg = err.error; } catch {}
-      console.warn(`[Mind Bridge] 错误: ${errMsg}`);
-      return null;
+      try { const err = await response.json(); 
+        // 优先取 diagnostics 中的消息，再取 error 字段
+        if (err.diagnostics?.[0]?.message) errMsg = err.diagnostics[0].message;
+        else if (err.error) errMsg = err.error;
+      } catch {}
+      throw new Error(errMsg);
     }
 
     const data: unknown = await response.json();

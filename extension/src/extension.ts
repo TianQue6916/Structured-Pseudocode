@@ -210,10 +210,17 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
   }
 
   const config = loadConfig();
-  const result = await analyzeContent(content, config.bridgeHost, config.bridgePort, document.uri.fsPath);
+  let result: AnalysisResult | null = null;
+  try {
+    result = await analyzeContent(content, config.bridgeHost, config.bridgePort, document.uri.fsPath);
+  } catch (e: unknown) {
+    statusBarItem.text = '$(warning) Mind';
+    vscode.window.showErrorMessage('分析失败: ' + (e instanceof Error ? e.message : '未知错误'));
+    return;
+  }
   if (!result) {
     statusBarItem.text = '$(warning) Mind';
-    vscode.window.showErrorMessage('分析请求失败，请检查桥接是否启动');
+    vscode.window.showErrorMessage('分析返回空结果');
     return;
   }
 
