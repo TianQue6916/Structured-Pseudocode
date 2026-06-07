@@ -141,15 +141,14 @@ export async function analyzeContent(
 
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        console.warn('[Mind Bridge] 请求超时');
+        throw new Error('请求超时（60秒），桥接或 DeepSeek API 响应过慢');
       } else if (error.message.includes('fetch') || error.message.includes('ECONNREFUSED')) {
-        console.warn('[Mind Bridge] 无法连接到桥接服务，请确保 mind-bridge 已启动');
+        throw new Error('无法连接到桥接服务');
       } else {
-        console.warn('[Mind Bridge] 通信错误:', error.message);
+        throw new Error('通信错误: ' + error.message);
       }
     }
-
-    return null;
+    throw new Error('未知网络错误');
   }
 }
 
@@ -215,8 +214,11 @@ export async function generateCode(
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
-    console.warn('[Mind Generate] 代码生成请求失败:', error instanceof Error ? error.message : '');
-    return null;
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') throw new Error('代码生成超时');
+      throw error;
+    }
+    throw new Error('代码生成失败');
   }
 }
 
