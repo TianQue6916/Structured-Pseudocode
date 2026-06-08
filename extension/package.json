@@ -309,6 +309,108 @@
       "editor.tokenColorCustomizations": {
         "textMateRules": [
           {
+            "scope": "keyword.control.mind",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "keyword.declaration.mind",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "keyword.other.python.mind",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "keyword.other.c.mind",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "keyword.control.import.mind",
+            "settings": {
+              "foreground": "#569CD6"
+            }
+          },
+          {
+            "scope": "support.function.builtin.mind",
+            "settings": {
+              "foreground": "#DCDCAA"
+            }
+          },
+          {
+            "scope": "storage.type.mind",
+            "settings": {
+              "foreground": "#4FC1FF"
+            }
+          },
+          {
+            "scope": "storage.type.annotation.mind",
+            "settings": {
+              "foreground": "#4FC1FF"
+            }
+          },
+          {
+            "scope": "constant.numeric.*.mind",
+            "settings": {
+              "foreground": "#B5CEA8"
+            }
+          },
+          {
+            "scope": "constant.language.*.mind",
+            "settings": {
+              "foreground": "#B5CEA8"
+            }
+          },
+          {
+            "scope": "string.quoted.*.mind",
+            "settings": {
+              "foreground": "#CE9178"
+            }
+          },
+          {
+            "scope": "comment.*.mind",
+            "settings": {
+              "foreground": "#6A9955"
+            }
+          },
+          {
+            "scope": "entity.name.function.*.mind",
+            "settings": {
+              "foreground": "#DCDCAA"
+            }
+          },
+          {
+            "scope": "entity.name.function.call.mind",
+            "settings": {
+              "foreground": "#4EC9B0"
+            }
+          },
+          {
+            "scope": "entity.name.function.decorator.mind",
+            "settings": {
+              "foreground": "#4EC9B0"
+            }
+          },
+          {
+            "scope": "keyword.operator.*.mind",
+            "settings": {
+              "foreground": "#D4D4D4"
+            }
+          },
+          {
+            "scope": "variable.other.mind",
+            "settings": {
+              "foreground": "#9CDCFE"
+            }
+          },
+          {
             "scope": "markup.other.mind",
             "settings": {
               "foreground": "#CE9178"
