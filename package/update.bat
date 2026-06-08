@@ -38,10 +38,11 @@ code --install-extension "%FOUND%" --force
 echo [OK] Installed
 echo.
 echo  Open .mind file -^> two buttons in editor title:
-echo    [分析代码变量]  [AI修正颜色]  [AI创建悬停]  [AI检测注释]      AI 重新分析并修正颜色
+echo    [分析代码变量]  [AI修正颜色
 echo    [AI创建悬停]      AI 构建实体关系缓存
-echo    [AI检测注释]      检测 # @d 生成 Python
+echo    [AI检测注释
 echo    [状态栏 Mind]       - view Token usage panel
+echo    [清除AI标记]      remove AI colors
 echo.
 echo Reload VS Code: Ctrl+Shift+P ^> Developer: Reload Window
 echo.
