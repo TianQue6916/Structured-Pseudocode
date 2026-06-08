@@ -160,8 +160,9 @@ export function registerSemanticTokenProvider(context: vscode.ExtensionContext):
 function buildTokens(document: vscode.TextDocument): vscode.SemanticTokens {
   const result = resultsMap.get(document.uri.toString());
 
+  // 没有语义数据时返回 null，让 VS Code 使用 TextMate 语法着色
   if (!result || !result.tokens || result.tokens.length === 0) {
-    return new vscode.SemanticTokens(new Uint32Array(0));
+    return null as any;
   }
 
   const builder = new vscode.SemanticTokensBuilder();
