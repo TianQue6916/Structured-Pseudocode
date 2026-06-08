@@ -131,6 +131,8 @@ function registerCommands(context: vscode.ExtensionContext): void {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'mind') return;
       clearSemanticResult(editor.document.uri.toString());
+      for (const d of colorDecos) { try { d.dispose(); } catch {} }
+      colorDecos = [];
       if (aiDecoration) editor.setDecorations(aiDecoration, []);
       fireSemanticTokensChanged();
       vscode.window.showInformationMessage('AI 标记已清除');
@@ -220,6 +222,8 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
     updateSemanticResult(filePath, cached);
     fireSemanticTokensChanged();
     applyAnalysisResult(document, cached);
+    const ce = vscode.window.activeTextEditor;
+    if (ce && ce.document === document && cached) applyColorsViaDecoration(ce, cached);
     statusBarItem.text = '$(symbol-namespace) Mind';
     return;
   }
@@ -245,6 +249,7 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
   saveSessionContext(filePath, content, result);
   applyAnalysisResult(document, result);
   fireSemanticTokensChanged();
+  { const ed2 = vscode.window.activeTextEditor; if (ed2 && ed2.document === document && result) applyColorsViaDecoration(ed2, result); }
 
   if (result.tokenUsage) {
     totalTokensUsed += result.tokenUsage.total;
@@ -295,6 +300,46 @@ async function triggerGeneration(document: vscode.TextDocument): Promise<void> {
     vscode.window.showErrorMessage('代码生成失败: ' + (e instanceof Error ? e.message : '未知错误'));
   }
 }
+
+function applyColorsViaDecoration(editor: vscode.TextEditor, result: AnalysisResult): void {
+  if (!result.tokens) return;
+  // 每组一个装饰类型
+  const colorMap: Record<string, string> = {
+    'keyword': '#569CD6', 'decl': '#569CD6',
+    'c-call': '#4EC9B0', 'py-def': '#DCDCAA', 'c-def': '#DCDCAA',
+    'ref': '#9CDCFE', 'type': '#4FC1FF', 'user-type': '#4FC1FF',
+    'nl-verb': '#569CD6', 'nl-noun': '#9CDCFE',
+    'operator': '#D4D4D4', 'ptr-op': '#D4D4D4',
+    'number': '#B5CEA8', 'const': '#B5CEA8',
+    'string': '#CE9178', 'char': '#CE9178',
+    'comment': '#6A9955', 'builtin': '#DCDCAA',
+  };
+  
+  // 清除旧的颜色装饰
+  for (const d of colorDecos) { try { d.dispose(); } catch {} }
+  colorDecos = [];
+  
+  // 按颜色分组收集 range
+  const groups: Record<string, vscode.Range[]> = {};
+  for (const t of result.tokens) {
+    const color = colorMap[t.type];
+    if (!color) continue;
+    if (!groups[color]) groups[color] = [];
+    groups[color].push(new vscode.Range(t.line, t.character, t.line, t.character + t.length));
+  }
+  
+  // 为每种颜色创建装饰
+  for (const [color, ranges] of Object.entries(groups)) {
+    const deco = vscode.window.createTextEditorDecorationType({
+      color,
+      rangeBehavior: vscode.DecorationRangeBehavior.OpenOpen,
+    });
+    colorDecos.push(deco);
+    editor.setDecorations(deco, ranges);
+  }
+}
+
+let colorDecos: vscode.TextEditorDecorationType[] = [];
 
 function applyAnalysisResult(document: vscode.TextDocument, result: AnalysisResult): void {
   const editor = vscode.window.activeTextEditor;
