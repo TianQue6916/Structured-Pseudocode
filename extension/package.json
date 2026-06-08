@@ -261,6 +261,10 @@
       {
         "command": "mind.restartBridge",
         "title": "Mind: 重新连接桥接"
+      },
+      {
+        "command": "mind.clearAI",
+        "title": "Mind: 清除 AI 标记"
       }
     ],
     "menus": {
@@ -284,6 +288,11 @@
           "command": "mind.analyzeAI",
           "when": "editorLangId == mind",
           "group": "navigation"
+        },
+        {
+          "command": "mind.clearAI",
+          "when": "editorLangId == mind",
+          "group": "navigation"
         }
       ],
       "editor/context": [
@@ -301,6 +310,10 @@
         },
         {
           "command": "mind.analyzeAI",
+          "when": "editorLangId == mind"
+        },
+        {
+          "command": "mind.clearAI",
           "when": "editorLangId == mind"
         }
       ]

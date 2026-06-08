@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { loadConfig, onConfigChange } from './config';
 import { analyzeContent, AnalysisResult, generateCode as genCode, GenerationResult } from './bridgeClient';
 import { getCachedResult, setCachedResult } from './cache';
-import { registerSemanticTokenProvider, updateSemanticResult, fireSemanticTokensChanged } from './semanticTokens';
+import { registerSemanticTokenProvider, updateSemanticResult, clearSemanticResult, fireSemanticTokensChanged } from './semanticTokens';
 import { registerIndentDecorations, renderIndentLines, updateDecorationsFromAnalysis } from './indentDecoration';
 import { registerHoverFeature, updateEntities } from './hoverFeature';
 import { registerDiagnosticManager, updateDiagnostics, getDiagnosticStats } from './diagnosticManager';
@@ -15,9 +15,16 @@ let statusBarItem: vscode.StatusBarItem;
 let bridgeConnected = false;
 let totalTokensUsed = 0;
 let totalCostUsd = 0;
+let aiDecoration: vscode.TextEditorDecorationType;
+let extContext: vscode.ExtensionContext;
 
 export function activate(context: vscode.ExtensionContext): void {
   try {
+  // 保存 context 引用供其他函数使用
+  extContext = context;
+  // 从持久化存储恢复 token 计数
+  totalTokensUsed = context.globalState.get('totalTokens', 0);
+  totalCostUsd = context.globalState.get('totalCost', 0);
   console.log('[Mind] 插件激活中...');
 
   // Status bar
@@ -34,6 +41,13 @@ export function activate(context: vscode.ExtensionContext): void {
   registerDiagnosticManager(context);
   registerSessionManager(context);
   registerDocLinks(context);
+
+  // AI decoration for analyzed tokens
+  aiDecoration = vscode.window.createTextEditorDecorationType({
+    border: '1px solid rgba(100,100,100,0.3)',
+    backgroundColor: 'rgba(197,134,192,0.08)',
+  });
+  context.subscriptions.push(aiDecoration);
 
   // Register commands
   registerCommands(context);
@@ -112,6 +126,15 @@ function registerCommands(context: vscode.ExtensionContext): void {
 
 // Button 2: AI detection of # @d comments (generate code, answer questions)
   context.subscriptions.push(
+    // Button 5: Clear AI markings
+    vscode.commands.registerCommand('mind.clearAI', () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.document.languageId !== 'mind') return;
+      clearSemanticResult(editor.document.uri.toString());
+      if (aiDecoration) editor.setDecorations(aiDecoration, []);
+      fireSemanticTokensChanged();
+      vscode.window.showInformationMessage('AI 标记已清除');
+    }),
     vscode.commands.registerCommand('mind.analyzeAI', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'mind') {
@@ -226,6 +249,8 @@ async function triggerAnalysis(document: vscode.TextDocument, _autoRefresh?: boo
   if (result.tokenUsage) {
     totalTokensUsed += result.tokenUsage.total;
     recordTokenUsage(result.tokenUsage.prompt, result.tokenUsage.completion, result.tokenUsage.cached);
+    extContext.globalState.update('totalTokens', totalTokensUsed);
+    extContext.globalState.update('totalCost', totalCostUsd);
     console.log(`[Token] ↑${result.tokenUsage.prompt} ↓${result.tokenUsage.completion} 缓存:${result.tokenUsage.cached} 累计:${totalTokensUsed}`);
   }
   vscode.window.showInformationMessage(
