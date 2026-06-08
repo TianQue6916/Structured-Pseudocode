@@ -97,7 +97,7 @@ export async function analyzeContent(
 ): Promise<AnalysisResult | null> {
   const url = `http://${host}:${port}/analyze`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 秒超时（DeepSeek 可能慢）
+  const timeoutId = setTimeout(() => controller.abort(), 180000); // 120 秒超时（DeepSeek 可能慢）
 
   try {
     const body: Record<string, unknown> = { content };
@@ -141,7 +141,7 @@ export async function analyzeContent(
 
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
-        throw new Error('请求超时（120秒），DeepSeek API 响应过慢，请稍后重试');
+        throw new Error('请求超时（180秒），DeepSeek API 响应过慢，请稍后重试');
       }
       const msg = error.message;
       if (msg.includes('ECONNREFUSED') || msg.includes('fetch failed') || msg.includes('ENOTFOUND')) {
@@ -201,7 +201,7 @@ export async function generateCode(
 ): Promise<GenerationResult | null> {
   const url = `http://${host}:${port}/generate`;
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 120000); // 120 秒超时
+  const timeoutId = setTimeout(() => controller.abort(), 180000); // 120 秒超时
 
   try {
     const response = await fetch(url, {
