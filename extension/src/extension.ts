@@ -17,6 +17,7 @@ let totalTokensUsed = 0;
 let totalCostUsd = 0;
 
 export function activate(context: vscode.ExtensionContext): void {
+  try {
   console.log('[Mind] 插件激活中...');
 
   // Status bar
@@ -58,6 +59,9 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 
   console.log('[Mind] 插件激活完成');
+  } catch (e) {
+    console.error('[Mind] 激活失败:', e);
+  }
 }
 
 function registerCommands(context: vscode.ExtensionContext): void {
