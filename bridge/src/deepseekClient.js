@@ -3,8 +3,8 @@ import OpenAI from 'openai';
 const deepseek = new OpenAI({
   apiKey: process.env.DEEPSEEK_API_KEY,
   baseURL: process.env.DEEPSEEK_BASE_URL || 'https://api.deepseek.com/v1',
-  timeout: parseInt(process.env.REQUEST_TIMEOUT || '120000'),
-  maxRetries: 2,
+  timeout: parseInt(process.env.REQUEST_TIMEOUT || '180000'),
+  maxRetries: 0,
 });
 
 const DEFAULT_MODEL = process.env.DEEPSEEK_MODEL || 'deepseek-v4-flash';
