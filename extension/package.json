@@ -304,6 +304,18 @@
           "when": "editorLangId == mind"
         }
       ]
+    },
+    "configurationDefaults": {
+      "editor.tokenColorCustomizations": {
+        "textMateRules": [
+          {
+            "scope": "markup.other.mind",
+            "settings": {
+              "foreground": "#CE9178"
+            }
+          }
+        ]
+      }
     }
   }
 }

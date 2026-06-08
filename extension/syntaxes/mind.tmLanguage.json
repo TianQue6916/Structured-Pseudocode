@@ -90,7 +90,7 @@
       ]
     },
     "chinese": {
-      "name": "variable.other.chinese.mind",
+      "name": "markup.other.mind",
       "match": "[\\u4e00-\\u9fff\\u3000-\\u303f]+"
     },
     "identifiers": {
